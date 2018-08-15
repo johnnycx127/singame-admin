@@ -1,8 +1,5 @@
 package com.singame.admin.query.filter;
 
-import com.singame.admin.vo.Gender;
-import com.singame.admin.vo.UserStatus;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -10,10 +7,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @Data
 @ToString
-public class UserFilter {
-  private String code;
+public class PermissionFilter {
   private String name;
-  private Gender gender;
-  private UserStatus status;
+  private String resource;
   private Long roleId;
 }

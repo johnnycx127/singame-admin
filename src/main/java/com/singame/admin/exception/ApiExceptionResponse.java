@@ -7,7 +7,6 @@ import lombok.NonNull;
 @Getter
 @AllArgsConstructor
 public class ApiExceptionResponse {
-
-    private String message;
-    @NonNull private int code;
+  private String message;
+  @NonNull private int code;
 }

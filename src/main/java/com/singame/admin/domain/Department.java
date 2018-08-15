@@ -9,11 +9,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @Data
 @ToString
-public class Permission {
+public class Department {
   private Long id;
-  private String resource;
+  private Long pid;
   private String name;
-  private String descritpion;
+  private String description;
   private Long createdBy;
   private Long updatedBy;
   private Long removedBy;

@@ -13,13 +13,12 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 public class TransactionConfig implements TransactionManagementConfigurer{
-    @Autowired
-    private DataSource dataSource;
+  @Autowired
+  private DataSource dataSource;
 
-    @Bean(name = "transactionManager")
-    @Override
-    public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
+  @Bean(name = "transactionManager")
+  @Override
+  public PlatformTransactionManager annotationDrivenTransactionManager() {
+    return new DataSourceTransactionManager(dataSource);
+  }
 }

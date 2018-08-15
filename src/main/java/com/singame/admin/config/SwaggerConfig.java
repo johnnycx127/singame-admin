@@ -23,17 +23,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {                                    
-    @Bean
-    public Docket api() {
-       // 添加head参数start
-        ParameterBuilder tokenPar = new ParameterBuilder();
-        List<Parameter> pars = new ArrayList<Parameter>();
-        tokenPar.name("Authorization").description("令牌").modelRef(new ModelRef("string")).parameterType("header")
-                .required(true).build();
-		pars.add((Parameter) tokenPar.build());
+  @Bean
+  public Docket api() {
+    // 添加head参数start
+    ParameterBuilder tokenPar = new ParameterBuilder();
+    List<Parameter> pars = new ArrayList<Parameter>();
+    tokenPar.name("Authorization").description("令牌").modelRef(new ModelRef("string")).parameterType("header")
+            .required(true).build();
+    pars.add((Parameter) tokenPar.build());
         // 添加head参数end
 
-		return new Docket(DocumentationType.SWAGGER_2)
+    return new Docket(DocumentationType.SWAGGER_2)
                     .directModelSubstitute(LocalDate.class, java.sql.Date.class)
                     .directModelSubstitute(LocalDateTime.class, java.util.Date.class)
                     .select()
@@ -42,15 +42,15 @@ public class SwaggerConfig {
                     .build()
                     .globalOperationParameters(pars)
                     .apiInfo(apiInfo());
-    }
-    
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                    .title("国泰君安股权投资API")
-                    .description("国泰君安股权系统API")
-                    .termsOfServiceUrl("")
-                    .version("1.0")
-                    .contact(new Contact("李宝剑", "", "lixu@chengantech.com"))
-                    .build();
-    }
+  }
+  
+  private ApiInfo apiInfo() {
+    return new ApiInfoBuilder()
+                .title("国泰君安股权投资API")
+                .description("国泰君安股权系统API")
+                .termsOfServiceUrl("")
+                .version("1.0")
+                .contact(new Contact("李宝剑", "", "lixu@chengantech.com"))
+                .build();
+  }
 }

@@ -12,8 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
   Long add(User user);
   void update(User user);
-  void delete(long userId);
-  User getById(long userId);
-  User getByName(String name);
+  User getById(Long userId);
+  User getByCode(String code);
   List<User> list(Query<UserFilter> query); 
 }
