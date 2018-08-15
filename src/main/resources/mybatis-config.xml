@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <package name="com.singame.admin.domain"/>
+         <package name="com.singame.admin.query"/>
+    </typeAliases>
+    <typeHandlers>
+        <!-- <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.singame.admin.vo.ExecPartnerType"/> -->
+
+        <typeHandler handler="com.singame.admin.utils.MybatisLocalDateTimeTypeHandler" javaType="org.joda.time.LocalDateTime"/>
+    </typeHandlers>
+    <mappers>
+        <mapper resource="com/singame/admin/mapper/UserMapper.xml"/>
+        <mapper resource="com/singame/admin/mapper/PermissionMapper.xml"/>
+    </mappers>
+</configuration>
