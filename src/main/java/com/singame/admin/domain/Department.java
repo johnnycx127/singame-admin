@@ -1,5 +1,7 @@
 package com.singame.admin.domain;
 
+import com.singame.admin.dto.DepartmentDTO;
+
 import org.joda.time.LocalDateTime;
 
 import lombok.Data;
@@ -21,4 +23,19 @@ public class Department {
   private LocalDateTime updatedAt;
   private LocalDateTime removedAt;
   private Integer version;
+
+  public DepartmentDTO toConvertDTO() {
+    DepartmentDTO departmentDTO = new DepartmentDTO();
+    departmentDTO.setId(id);
+    departmentDTO.setPid(pid);
+    departmentDTO.setName(name);
+    departmentDTO.setDescription(description);
+    departmentDTO.setCreatedBy(createdBy);
+    departmentDTO.setCreatedAt(createdAt);
+    departmentDTO.setUpdatedBy(updatedBy);
+    departmentDTO.setUpdatedAt(updatedAt);
+    departmentDTO.setRemovedBy(removedBy);
+    departmentDTO.setRemovedAt(removedAt);
+    return departmentDTO;
+  }
 }

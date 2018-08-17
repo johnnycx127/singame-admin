@@ -16,4 +16,5 @@ public class UserFilter {
   private Gender gender;
   private UserStatus status;
   private Long roleId;
+  private Long departmentId;
 }

@@ -1,7 +1,5 @@
 package com.singame.admin.query.filter;
 
-import com.singame.admin.vo.PermissionAction;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,9 +7,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Data
 @ToString
-public class PermissionFilter {
+public class DepartmentFilter {
   private String name;
-  private String resource;
-  private Long roleId;
-  private PermissionAction action;
 }

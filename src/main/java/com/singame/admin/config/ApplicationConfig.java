@@ -1,8 +1,8 @@
 package com.singame.admin.config;
 
 
-import com.singame.admin.interceptor.JwtInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.singame.admin.interceptor.JwtInterceptor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

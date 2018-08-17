@@ -1,5 +1,7 @@
 package com.singame.admin.exception;
 
+import com.singame.admin.common.ReplyBizStatus;
+
 import lombok.Getter;
 
 @Getter
@@ -10,6 +12,6 @@ public class UnauthorizedException extends ApiException {
     this("Unauthorized");
   }
   public UnauthorizedException(String msg) {
-    super(BizStatus.UNAUTHORIZED, msg);
+    super(ReplyBizStatus.UNAUTHORIZED, msg);
   }
 }

@@ -1,5 +1,7 @@
 package com.singame.admin.domain;
 
+import com.singame.admin.dto.RoleDTO;
+
 import org.joda.time.LocalDateTime;
 
 import lombok.Data;
@@ -19,4 +21,17 @@ public class Role {
   private LocalDateTime updatedAt;
   private LocalDateTime removedAt;
   private Integer version;
+
+  public RoleDTO toConvertDTO() {
+    RoleDTO roleDTO = new RoleDTO();
+    roleDTO.setId(id);
+    roleDTO.setName(name);
+    roleDTO.setCreatedBy(createdBy);
+    roleDTO.setCreatedAt(createdAt);
+    roleDTO.setUpdatedBy(updatedBy);
+    roleDTO.setUpdatedAt(updatedAt);
+    roleDTO.setRemovedBy(removedBy);
+    roleDTO.setRemovedAt(removedAt);
+    return roleDTO;
+  }
 }

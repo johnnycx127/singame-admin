@@ -4,8 +4,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.singame.admin.dto.PermissionTokenDTO;
 import com.singame.admin.exception.UnauthorizedException;
+import com.singame.admin.dto.UserAuthDTO;
 import com.singame.admin.utils.JwtUtil;
 import com.google.common.base.Strings;
 
@@ -19,9 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
   private Logger logger = LoggerFactory.getLogger(JwtInterceptor.class);
-
   @Resource
-  private RedisTemplate<String, PermissionTokenDTO> redisTemplate;
+  private RedisTemplate<String, UserAuthDTO> redisTemplate;
 
   private String jwtHeader;
   private String jwtHeaderPrefix;
@@ -46,11 +45,11 @@ public class JwtInterceptor implements HandlerInterceptor {
         throw new UnauthorizedException("token 过期");
       }
       String userId = JwtUtil.getSessionId(token, jwtSceret);
-      PermissionTokenDTO tokenObj = redisTemplate.opsForValue().get(userId);
-      if (tokenObj == null) {
+      UserAuthDTO userAuth = redisTemplate.opsForValue().get(userId);
+      if (userAuth == null) {
         throw new UnauthorizedException("token 过期");
       }
-      request.setAttribute("auth", tokenObj);
+      request.setAttribute("auth", userAuth);
     } catch (Exception e) {
       logger.error("error when parse token ======" + e.getMessage());
       throw new UnauthorizedException("token 过期");

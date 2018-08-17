@@ -1,5 +1,7 @@
 package com.singame.admin.exception;
 
+import com.singame.admin.common.ReplyBizStatus;
+
 import lombok.Getter;
 
 @Getter
@@ -11,6 +13,6 @@ public class BadRequestException extends ApiException {
   }
 
   public BadRequestException(String msg) {
-    super(BizStatus.BAD_REQUEST, msg);
+    super(ReplyBizStatus.BAD_REQUEST, msg);
   }
 }

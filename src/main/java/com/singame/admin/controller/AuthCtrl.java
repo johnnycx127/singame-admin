@@ -5,7 +5,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.singame.admin.domain.User;
-import com.singame.admin.dto.PermissionTokenDTO;
+import com.singame.admin.dto.UserAuthDTO;
 import com.singame.admin.dto.UserDTO;
 import com.singame.admin.exception.BadRequestException;
 import com.singame.admin.exception.UnauthorizedException;
@@ -36,7 +36,7 @@ public class AuthCtrl {
   private Logger logger = LoggerFactory.getLogger(AuthCtrl.class);
 
   @Resource
-  private RedisTemplate<String, PermissionTokenDTO> redisTemplate;
+  private RedisTemplate<String, UserAuthDTO> redisTemplate;
 
   @Autowired
   private UserService userService;
@@ -88,7 +88,7 @@ public class AuthCtrl {
       if (!BCrypt.checkpw(login.getPassword(), psw)) {
         throw new ServletException("密码错误");
       }
-      PermissionTokenDTO permissionObj = permissionService.getpermissionlist(u.getId());
+      UserAuthDTO permissionObj = permissionService.getpermissionlist(u.getId());
       String signedId = SignatureUtil.sha256(u.getId().toString());
       redisTemplate.opsForValue().set(signedId, permissionObj);
       token = JwtUtil.createToken(signedId, jwtSceret, jwtExpiredTime);
@@ -135,7 +135,7 @@ public class AuthCtrl {
         throw new BadRequestException("非法签名");
       }
       String token = authHeader.substring(jwtHeaderPrefix.length() + 1);
-      PermissionTokenDTO permissionObj = redisTemplate.opsForValue().get(JwtUtil.getSessionId(token, jwtSceret));
+      UserAuthDTO permissionObj = redisTemplate.opsForValue().get(JwtUtil.getSessionId(token, jwtSceret));
       if (permissionObj == null) {
         throw new BadRequestException("非法签名");
       }

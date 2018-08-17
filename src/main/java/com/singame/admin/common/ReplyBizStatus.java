@@ -1,6 +1,6 @@
-package com.singame.admin.exception;
+package com.singame.admin.common;
 
-public class BizStatus {
+public class ReplyBizStatus {
   public static final int OK = 200;
   public static final int UNAUTHORIZED = 401;
   public static final int NOT_FOUND = 404;
