@@ -14,6 +14,7 @@ CREATE TABLE `user` (
   `created_at` datetime DEFAULT NULL COMMENT '创建日期',
   `updated_at` datetime DEFAULT NULL COMMENT '更新日期',
   `version` int(11) DEFAULT NULL COMMENT '版本, 乐观锁',
+  `dispatch_role_version` int(11) DEFAULT NULL COMMENT '分配角色版本',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_code_index` (`code`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -25,6 +26,13 @@ CREATE TABLE `department` (
   `pid` bigint(20) DEFAULT NULL COMMENT '父ID',
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '名称',
   `describtion` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '备注',
+  `created_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+  `updated_by` bigint(20) DEFAULT NULL COMMENT '修改人',
+  `removed_by` bigint(20) DEFAULT NULL COMMENT '删除人',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  `removed_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `version` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*---------------------------end create department--------------------------*/
@@ -36,7 +44,8 @@ CREATE TABLE `permission` (
   `resouce` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '资源',
   `action` int(11) DEFAULT NULL COMMENT '行为 0-未知 1-读取 2-写入',
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '名称',
-  `discribtion` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '描述',
+  `is_only_master` int(11) DEFAULT 0 COMMENT '是否管理员唯一 1-是 0-否',
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '描述',
   `created_by` bigint(20) DEFAULT NULL COMMENT '创建人',
   `updated_by` bigint(20) DEFAULT NULL COMMENT '修改人',
   `removed_by` bigint(20) DEFAULT NULL COMMENT '删除人',
@@ -60,6 +69,7 @@ CREATE TABLE `role` (
   `updated_at` datetime DEFAULT NULL,
   `removed_at` datetime DEFAULT NULL,
   `version` int(11) DEFAULT NULL,
+  `dispatch_permission_version` int(11) DEFAULT NULL COMMENT '分配权限版本',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*---------------------------end create role-------------------------------*/
@@ -68,6 +78,8 @@ CREATE TABLE `role` (
 CREATE TABLE `user_role` (
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+  `created_by` bigint(20) DEFAULT NULL COMMENT '创建者ID',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`user_id`,`role_id`),
   KEY `user_role_user_id_index` (`user_id`) USING BTREE,
   KEY `user_role_role_id_index` (`role_id`) USING BTREE
@@ -78,6 +90,8 @@ CREATE TABLE `user_role` (
 CREATE TABLE `role_permission` (
   `role_id` bigint(20) NOT NULL COMMENT '角色ID',
   `permission_id` bigint(20) NOT NULL COMMENT '权限ID',
+  `created_by` bigint(20) DEFAULT NULL COMMENT '创建者ID',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`role_id`,`permission_id`),
   KEY `role_permission_role_id_index` (`role_id`) USING BTREE,
   KEY `role_permission_permission_id_index` (`permission_id`) USING BTREE
