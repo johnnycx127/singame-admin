@@ -12,17 +12,12 @@ public interface UserRoleMapper {
     @Param("userId") Long userId,
     @Param("roleId") Long roleId,
     @Param("createdBy") Long createdBy,
-    @Param("createdAt") LocalDateTime createdAt,
-    @Param("version") Integer version);
+    @Param("createdAt") LocalDateTime createdAt);
   Integer delete(
     @Param("userId") Long userId,
-    @Param("roleId") Long roleId,
-    @Param("version") Integer version);
+    @Param("roleId") Long roleId);
   Integer bulkDelete(
     @Param("userId") Long userId,
-    @Param("roleIdList") List<Long> roleIdList,
-    @Param("version") Integer version);
-  Integer clear(
-    @Param("userId") Long userId,
-    @Param("version") Integer version);
+    @Param("roleIdList") List<Long> roleIdList);
+  Integer clear(@Param("userId") Long userId);
 }

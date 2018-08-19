@@ -4,49 +4,42 @@
 
 <mapper namespace="com.singame.admin.mapper.RolePermissionMapper">
   <insert id="add">
-    INSERT INTO role_permission (role_id, permission_id)
-      SELECT #{roleId}, #{permissionId} FROM
-        user
-      WHERE
-        user.dispatch_permission_version = #{version}
+    INSERT INTO role_permission
+      (role_id, permission_id, created_by, created_at)
+    VALUES
+      (#{roleId}, #{permissionId}, #{createdBy}, #{createdAt})
+  </insert>
+
+  <insert id="bulkAdd">
+    INSERT INTO role_permission
+      (role_id, permission_id)
+    VALUES
+    <foreach collection="list" item="permissionIdList" open="" close="" separator=",">
+        (#{roleId}, #{permissionId}, #{createdBy}, #{createdAt})
+    </foreach>
   </insert>
 
   <delete id="delete">
-    DELETE role_permission.* FROM
+    DELETE FROM
       role_permission
-    INNER JOIN
-      role
-    ON
-      role.id = role_permission.role_id AND
-      role.dispatch_dispatch_version = #{version} AND
-      role.id = #{roleId}
     WHERE
-      user_role.role_id = #{roleId}
+      role_id = #{roleId} AND
+      permission_id = #{permissionId}
   </delete>
 
   <delete id="bulkDelete">
-    DELETE role_permission.* FROM
+    DELETE FROM
       role_permission
-    INNER JOIN
-      role
-    ON
-      role.id = role_permission.role_id AND
-      role.dispatch_permission_version = #{version} AND
-      role.id = #{roleId}
     WHERE
-    <foreach collection="list" item="permissionIdList" open=" " close=" " separator="OR">
-        role_permission.permission_id = #{item}
+    <foreach collection="list" item="permissionIdList" open="(" close=")" separator="OR">
+        role_id = #{roleId} AND permission_id = #{permissionId}
     </foreach>
   </delete>
 
   <delete id="clear">
-    DELETE role_permission.* FROM
+    DELETE FROM
       role_permission
-    INNER JOIN
-      role
-    ON
-      role.id = role_permission.role_id AND
-      role.dispatch_permission_version = #{version}
-      role.id = #{roleId}
+    WHERE
+      role_id = #{roleId}
   </delete>
 </mapper>

@@ -131,7 +131,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void dispatchRoles(Long id, List<Long> roleIdList, Integer dispatchVersion, User operator) throws NotFoundException, DataConflictException {
+  public void dispatchRoles(Long id, List<Long> roleIdList, Integer dispatchVersion, User operator) 
+      throws NotFoundException, DataConflictException {
     RoleFilter roleFilter = new RoleFilter();
     roleFilter.setUserId(id);
     Query<RoleFilter> query = new Query<>();
@@ -140,10 +141,10 @@ public class UserServiceImpl implements UserService {
     List<Long> storedRoleIdList = roles.stream().map(role -> role.getId()).collect(Collectors.toList());
     storedRoleIdList.stream()
                     .filter(storedId -> !roleIdList.contains(storedId))
-                    .forEach(deletingId -> userRoleMapper.delete(id, deletingId, dispatchVersion));
+                    .forEach(deletingId -> userRoleMapper.delete(id, deletingId));
     roleIdList.stream()
               .filter(roleId -> !storedRoleIdList.contains(roleId))
-              .forEach(addingId -> userRoleMapper.add(id, addingId, operator.getId(), LocalDateTime.now(), dispatchVersion));
+              .forEach(addingId -> userRoleMapper.add(id, addingId, operator.getId(), LocalDateTime.now()));
     Integer rowNum = userMapper.incDispatchRoleVersion(dispatchVersion);
     if (rowNum == 0) {
       throw new DataConflictException();

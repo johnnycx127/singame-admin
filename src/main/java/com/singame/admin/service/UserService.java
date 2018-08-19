@@ -17,5 +17,6 @@ public interface UserService {
   void freeze(Long id, User Operator) throws NotFoundException, DataConflictException;
   void unfreeze(Long id, User Operator) throws NotFoundException, DataConflictException;
   void disable(Long id, User Operator) throws NotFoundException, DataConflictException;
-  void dispatchRoles(Long id, List<Long> roleIdList, Integer dispatchVersion, User Operator) throws NotFoundException, DataConflictException;
+  void dispatchRoles(Long id, List<Long> roleIdList, Integer dispatchVersion, User Operator)
+      throws NotFoundException, DataConflictException;
 }

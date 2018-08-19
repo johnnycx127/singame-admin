@@ -12,17 +12,12 @@ public interface RolePermissionMapper {
     @Param("roleId") Long roleId,
     @Param("permissionId") Long permissionId,
     @Param("createdBy") Long createdBy,
-    @Param("createdAt") LocalDateTime createdAt,
-    @Param("version") Integer version);
+    @Param("createdAt") LocalDateTime createdAt);
   Integer delete(
     @Param("roleId") Long roleId,
-    @Param("permissionId") Long permissionId,
-    @Param("version") Integer version);
+    @Param("permissionId") Long permissionId);
   Integer bulkDelete(
     @Param("roleId") Long roleId,
-    @Param("permissionId") List<Long> permissionId,
-    @Param("version") Integer version);
-  Integer clear(
-    @Param("roleId") Long roleId,
-    @Param("version") Integer version);
+    @Param("permissionId") List<Long> permissionId);
+  Integer clear(@Param("roleId") Long roleId);
 }
