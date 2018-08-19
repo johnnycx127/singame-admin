@@ -19,6 +19,7 @@ public class Permission {
   private PermissionAction action;
   private String name;
   private String descritpion;
+  private Boolean isOnlyMaster;
   private Long createdBy;
   private Long updatedBy;
   private Long removedBy;
@@ -35,12 +36,14 @@ public class Permission {
     permissionDTO.setAction(action);
     permissionDTO.setName(name);
     permissionDTO.setDescritpion(descritpion);
+    permissionDTO.setIsOnlyMaster(isOnlyMaster);
     permissionDTO.setCreatedBy(createdBy);
     permissionDTO.setCreatedAt(createdAt);
     permissionDTO.setUpdatedBy(updatedBy);
     permissionDTO.setUpdatedAt(updatedAt);
     permissionDTO.setRemovedBy(removedBy);
     permissionDTO.setRemovedAt(removedAt);
+    permissionDTO.setVersion(version);
     return permissionDTO;
   }
 }

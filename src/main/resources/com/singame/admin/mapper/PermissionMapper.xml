@@ -17,17 +17,93 @@
 
 <mapper namespace="com.singame.admin.mapper.PermissionMapper">
   <insert id="add" parameterType="Permission">
+    INSERT INTO permission
+    (
+      code, resource, action, name, description,
+      created_by, updated_by, removed_by,
+      created_at, updated_at, removed_at, version
+    )
+    VALUES
+    (
+      #{code}, #{resource}, #{action}, #{name}, #{description},
+      #{createdBy}, #{updatedBy}, #{removedBy},
+      #{createdAt}, #{updatedAt}, #{removedAt}, 1
+    )
   </insert>
 
   <update id="update" parameterType="Permission">
+    UPDATE permission
+        SET code = #{code},
+            resource = #{resource},
+            action = #{action},
+            name = #{name},
+            description = #{description},
+            updated_by = #{updatedBy},
+            updated_at = #{updatedAt},
+            version = version + 1
+        WHERE
+            removed_at IS NULL AND
+            id = #{id} AND
+            version = #{version}
   </update>
 
   <update id="delete" parameterType="Long">
+    UPDATE permission
+        SET removed_by = #{removedBy},
+            removed_at = #{removedAt},
+            version = verions + 1
+        WHERE
+            removed_at IS NULL AND
+            id = #{id} AND
+            version = #{version}
   </update>
 
   <select id="getById" parameterType="Long" resultType="Permission">
+    SELECT * FROM
+      permission
+    WHERE
+      removed_at IS NULL AND
+      id = #{id}
+  </select>
+
+  <select id="getByCode" parameterType="String" resultType="Permission">
+    SELECT * FROM
+      permission
+    WHERE
+      removed_at IS NULL AND
+      code = #{code}
   </select>
 
   <select id="list" parameterType="Query" resultType="Permission">
+    SELECT permission.* FROM
+      permission
+    <if test="filter.roleId != null">
+    INNER JOIN
+      role_permission
+    ON 
+      role_permission.permission_id = permission.id AND
+      role_permission.role_id = #{filter.roleId}
+    </if>
+    WHERE
+      permission.removed_at IS NULL
+    <if test="filter.name != null and filter.name != ''">
+      AND permission.name LIKE "%"#{filter.name}"%"
+    </if>
+    <if test="filter.code != null and filter.code !=''">
+      AND permission.code LIKE "%"#{filter.code}"%"
+    </if>
+    <if test="filter.resource != null and filter.resource != ''">
+      AND permission.resource LIKE "%"#{filter.resource}"%"
+    </if>
+    <if test="filter.action != null">
+      AND permission.action = #{filter.action}
+    </if>
+    <if test="!sorters.isEmpty()">
+    ORDER BY
+      <foreach collection="list" item="sorters" open=" " close=" " separator=",">
+        user.#{item.fieldName} #{item.sort}
+      </foreach>
+    </if>
+    LIMIT #{offset},<choose><when test="size > 0">#{size}</when><otherwise>20</otherwise></choose>
   </select>
 </mapper>

@@ -1,0 +1,52 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.singame.admin.mapper.UserRoleMapper">
+  <insert id="add">
+    INSERT INTO user_role (user_id, role_id)
+      SELECT #{userId}, #{roleId} FROM
+        user
+      WHERE
+        user.dispatch_role_version = #{version}
+  </insert>
+
+  <delete id="delete">
+    DELETE user_role.* FROM
+      user_role
+    INNER JOIN
+      user
+    ON
+      user.id = user_role.user_id AND
+      user.dispatch_role_version = #{version} AND
+      user.id = #{userId}
+    WHERE
+      user_role.role_id = #{roleId}
+  </delete>
+
+  <delete id="bulkDelete">
+    DELETE user_role.* FROM
+      user_role
+    INNER JOIN
+      user
+    ON
+      user.id = user_role.user_id AND
+      user.dispatch_role_version = #{version} AND
+      user.id = #{userId}
+    WHERE
+      <foreach collection="list" item="roleIdList" open=" " close=" " separator="OR">
+        user_role.role_id = #{item}
+      </foreach>
+  </delete>
+
+  <delete id="clear">
+    DELETE user_role.* FROM
+      user_role
+    INNER JOIN
+      user
+    ON
+      user.id = user_role.user_id AND
+      user.dispatch_role_version = #{version}
+      user.id = #{userId}
+  </delete>
+</mapper>

@@ -21,31 +21,35 @@ import lombok.ToString;
 @ApiModel(value="PermissionDTO", description="权限")
 public class PermissionDTO {
   private Long id;
-  @ApiModelProperty(value = "编码")
+  @ApiModelProperty(value="编码")
   private String code;
-  @ApiModelProperty(value = "资源URL")
+  @ApiModelProperty(value="资源URL")
   private String resource;
-  @ApiModelProperty(value = "行为")
+  @ApiModelProperty(value="行为")
   private PermissionAction action;
-  @ApiModelProperty(value = "名称")
+  @ApiModelProperty(value="名称")
   private String name;
-  @ApiModelProperty(value = "描述")
+  @ApiModelProperty(value="描述")
   private String descritpion;
-  @ApiModelProperty(value = "创建者")
+  @ApiModelProperty(value="创建者")
   private Long createdBy;
-  @ApiModelProperty(value = "修改者")
+  @ApiModelProperty(value="是否管理员唯一")
+  private Boolean isOnlyMaster;
+  @ApiModelProperty(value="修改者")
   private Long updatedBy;
-  @ApiModelProperty(value = "删除者")
+  @ApiModelProperty(value="删除者")
   private Long removedBy;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime createdAt;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime updatedAt;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime removedAt;
+  @ApiModelProperty(value="版本信息")
+  private Integer version;
 
   public Permission toConvertEntity() {
     Permission permission = new Permission();
@@ -55,12 +59,14 @@ public class PermissionDTO {
     permission.setAction(action);
     permission.setName(name);
     permission.setDescritpion(descritpion);
+    permission.setIsOnlyMaster(isOnlyMaster);
     permission.setCreatedBy(createdBy);
     permission.setCreatedAt(createdAt);
     permission.setUpdatedBy(updatedBy);
     permission.setUpdatedAt(updatedAt);
     permission.setRemovedBy(removedBy);
     permission.setRemovedAt(removedAt);
+    permission.setVersion(version);
     return permission;
   }
 }

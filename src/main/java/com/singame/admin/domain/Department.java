@@ -36,6 +36,7 @@ public class Department {
     departmentDTO.setUpdatedAt(updatedAt);
     departmentDTO.setRemovedBy(removedBy);
     departmentDTO.setRemovedAt(removedAt);
+    departmentDTO.setVersion(version);
     return departmentDTO;
   }
 }

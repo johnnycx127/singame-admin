@@ -10,6 +10,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class PermissionFilter {
+  private String code;
   private String name;
   private String resource;
   private Long roleId;

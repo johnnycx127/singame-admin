@@ -1,6 +1,7 @@
 package com.singame.admin.service.impl;
 
 import com.singame.admin.domain.Permission;
+import com.singame.admin.domain.User;
 import com.singame.admin.service.PermissionService;
 import com.singame.admin.query.Query;
 import com.singame.admin.query.filter.PermissionFilter;
@@ -20,15 +21,15 @@ public class PermissionServiceImpl implements PermissionService {
   PermissionMapper permissionMapper;
 
   @Override
-  public Long create(Permission permission) {
+  public Long create(Permission permission, User operator) {
     return null;
   }
   @Override
-  public void update(Permission permission) {
+  public void update(Permission permission, User operator) {
     
   }
   @Override
-  public void delete(Long id) {
+  public void delete(Long id, Integer version, User operator) {
     
   }
   @Override

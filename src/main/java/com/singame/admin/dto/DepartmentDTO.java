@@ -20,27 +20,29 @@ import lombok.ToString;
 @ApiModel(value="DepartmentDTO", description="部门")
 public class DepartmentDTO {
   private Long id;
-  @ApiModelProperty(value = "父部门ID")
+  @ApiModelProperty(value="父部门ID")
   private Long pid;
-  @ApiModelProperty(value = "名称")
+  @ApiModelProperty(value="名称")
   private String name;
-  @ApiModelProperty(value = "描述")
+  @ApiModelProperty(value="描述")
   private String description;
-  @ApiModelProperty(value = "创建人")
+  @ApiModelProperty(value="创建人")
   private Long createdBy;
-  @ApiModelProperty(value = "修改人")
+  @ApiModelProperty(value="修改人")
   private Long updatedBy;
-  @ApiModelProperty(value = "删除人")
+  @ApiModelProperty(value="删除人")
   private Long removedBy;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime createdAt;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime updatedAt;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime removedAt;
+  @ApiModelProperty(value="版本信息")
+  private Integer version;
 
   public Department toConvertEntity() {
     Department department = new Department();
@@ -54,6 +56,7 @@ public class DepartmentDTO {
     department.setUpdatedAt(updatedAt);
     department.setRemovedBy(removedBy);
     department.setRemovedAt(removedAt);
+    department.setVersion(version);
     return department;
   }
 }

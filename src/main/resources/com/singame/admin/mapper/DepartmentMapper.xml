@@ -17,17 +17,63 @@
 
 <mapper namespace="com.singame.admin.mapper.DepartmentMapper">
   <insert id="add" parameterType="Department">
+    INSERT INTO department
+    (
+      pid, name, description, created_by, updated_by, created_at, updated_at, version
+    )
+    VALUES
+    (
+      #{pid}, #{name}, #{description}, #{createdBy}, #{updatedBy}, #{createdAt}, #{updatedAt}, 1
+    )
   </insert>
 
   <update id="update" parameterType="Department">
+    UPDATE department
+          SET pid = #{pid},
+              name = #{name},
+              description = #{description},
+              updated_by = #{updatedBy},
+              updated_at = #{updatedAt},
+              version = version + 1
+          WHERE
+              removed_at IS NULL AND
+              id = #{id} AND
+              version = #{version}
   </update>
 
   <update id="delete" parameterType="Long">
+    UPDATE department
+        SET removed_by = #{removed_by},
+            removed_at = #{removed_at},
+            version = version + 1
+        WHERE
+          removed_at IS NULL AND
+          id = #{id} AND
+          version = #{version}
   </update>
 
   <select id="getById" parameterType="Long" resultType="Department">
+    SELECT * FROM
+      department
+    WHERE
+      removed_at IS NULL AND
+      id = #{id}
   </select>
 
   <select id="list" parameterType="Query" resultType="Department">
+    SELECT * FROM
+      department
+    WHERE
+      removed_at IS NULL AND
+    <if test="filter.name != null and filter.name != ''">  
+      AND name LIKE "%"#{filter.name}"%"
+    </if>
+    <if test="!sorters.isEmpty()">
+      ORDER BY
+      <foreach collection="list" item="sorters" open=" " close=" " separator=",">
+        user.#{item.fieldName} #{item.sort}
+      </foreach>
+    </if>
+    LIMIT #{offset},<choose><when test="size > 0">#{size}</when><otherwise>20</otherwise></choose>
   </select>
 </mapper>

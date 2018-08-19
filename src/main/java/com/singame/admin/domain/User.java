@@ -29,6 +29,7 @@ public class User {
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private Integer version;
+  private Integer dispatchRoleVersion;
 
   public UserDTO toConvertDTO() {
     UserDTO userDTO = new UserDTO();
@@ -43,6 +44,8 @@ public class User {
     userDTO.setCreatedAt(createdAt);
     userDTO.setUpdatedBy(updatedBy);
     userDTO.setUpdatedAt(updatedAt);
+    userDTO.setVersion(version);
+    userDTO.setDispatchRoleVersion(dispatchRoleVersion);
     return userDTO;
   }
 

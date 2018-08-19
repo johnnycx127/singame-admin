@@ -11,8 +11,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserMapper {
   Long add(User user);
-  void update(User user);
+  Integer update(User user);
   User getById(Long userId);
   User getByCode(String code);
-  List<User> list(Query<UserFilter> query); 
+  List<User> list(Query<UserFilter> query);
+  Integer incDispatchRoleVersion(Integer version);
 }

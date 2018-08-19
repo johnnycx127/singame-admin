@@ -21,31 +21,37 @@
     (
       code, password, name, gender, status, department_id,
       is_department_master, position, created_by, updated_by, 
-      created_at, updated_at, version
+      created_at, updated_at, version, dispatch_role_version
     )
     VALUES
     (
       #{code}, #{password}, #{name}, #{gender.value}, #{status.value}, #{departmentId},
       #{isDepartmentMaster}, #{position}, #{createdBy}, #{updatedBy},
-      #{createdAt}, #{updatedAt}, 1
+      #{createdAt}, #{updatedAt}, 1, 0
     )
   </insert>
 
   <update id="update" parameterType="User">
     UPDATE user
         SET name = #{name},
-            password = #{password},
-            gender = #{gender.value},
             status = #{status.value},
+            gender = #{gender.value},
             department_id = #{departmentId},
             is_department_master = #{isDepartmentMaster},
             position = #{position},
             updated_by = #{updatedBy},
             updated_at = #{updatedAt},
-            version = version + 1
+            version = version + 1,
+            dispatch_role_version = 0
         WHERE
             id = #{id} AND
             version = #{version}
+  </update>
+
+  <update id="incDispatchRoleVersion">
+    UPDATE user
+        SET dispatch_role_version = dispatch_role_version + 1
+        WHERE dispatch_role_version = #{version}
   </update>
 
   <select id="getById" parameterType="Long" resultType="User">
@@ -74,19 +80,19 @@
     WHERE
       1 = 1
     <if test="filter.code != null and filter.code != ''">  
-		AND user.code like "%"#{filter.code}"%"
+		  AND user.code LIKE "%"#{filter.code}"%"
     </if>
     <if test="filter.name != null and filter.name != ''">  
-		AND user.name like "%"#{filter.name}"%"
+		  AND user.name LIKE "%"#{filter.name}"%"
     </if>
     <if test="filter.gender != null">  
-		AND user.gender = #{filter.gender}
+		  AND user.gender = #{filter.gender}
     </if>
     <if test="filter.status != null">  
-		AND user.status = #{filter.status}
+		  AND user.status = #{filter.status}
     </if>
     <if test="filter.departmentId != null">
-    AND user.department_id = #{filter.department_id}
+      AND user.department_id = #{filter.department_id}
     </if>
     <if test="!sorters.isEmpty()">
     ORDER BY

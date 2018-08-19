@@ -13,6 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+  @ExceptionHandler(DataConflictException.class)
+  public final ResponseEntity<ResponseBody<?>> handleDataConflictExceptions(DataConflictException ex, WebRequest request) {
+    ResponseBody<?> exceptionResponse = new ResponseBody<>(ex.getCode(), ex.getMessage());
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(NotFoundException.class)
   public final ResponseEntity<ResponseBody<?>> handleNotFoundExceptions(NotFoundException ex, WebRequest request) {
     ResponseBody<?> exceptionResponse = new ResponseBody<>(ex.getCode(), ex.getMessage());

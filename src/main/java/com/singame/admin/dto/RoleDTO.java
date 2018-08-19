@@ -17,26 +17,30 @@ import lombok.ToString;
 @Data
 @ToString
 @JsonInclude(Include.NON_EMPTY)
-@ApiModel(value = "RoleDTO", description = "角色")
+@ApiModel(value="RoleDTO", description="角色")
 public class RoleDTO {
   private Long id;
-  @ApiModelProperty(value = "名称")
+  @ApiModelProperty(value="名称")
   private String name;
-  @ApiModelProperty(value = "创建人")
+  @ApiModelProperty(value="创建人")
   private Long createdBy;
-  @ApiModelProperty(value = "修改人")
+  @ApiModelProperty(value="修改人")
   private Long updatedBy;
-  @ApiModelProperty(value = "删除人")
+  @ApiModelProperty(value="删除人")
   private Long removedBy;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime createdAt;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime updatedAt;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-  @ApiModelProperty(example = "2017-01-01 00:00:00")
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+  @ApiModelProperty(example="2017-01-01 00:00:00")
   private LocalDateTime removedAt;
+  @ApiModelProperty(value="版本信息")
+  private Integer version;
+  @ApiModelProperty(value="分配权限版本")
+  private Integer dispatchPermissionVersion;
 
   public Role toConvertEntity() {
     Role role = new Role();
@@ -48,6 +52,8 @@ public class RoleDTO {
     role.setUpdatedAt(updatedAt);
     role.setRemovedBy(removedBy);
     role.setRemovedAt(removedAt);
+    role.setVersion(version);
+    role.setDispatchPermissionVersion(dispatchPermissionVersion);
     return role;
   }
 }

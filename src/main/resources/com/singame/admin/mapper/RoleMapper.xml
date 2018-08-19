@@ -20,11 +20,11 @@
   <insert id="add" parameterType="Role">
     INSERT INTO role
     (
-      name, created_by, updated_by, created_at, updated_at, version
+      name, created_by, updated_by, created_at, updated_at, version, dispatch_permission_version
     )
     VALUES
     (
-      #{name}, #{createdBy}, #{updatedBy}, #{createdAt}, #{updatedAt}, 1
+      #{name}, #{createdBy}, #{updatedBy}, #{createdAt}, #{updatedAt}, 1, 0
     )
   </insert>
 
@@ -38,6 +38,12 @@
             removed_at IS NULL AND
             id = #{id} AND
             version = #{version}
+  </update>
+
+  <update id="incDispatchRoleVersion">
+    UPDATE user
+        SET dispatch_permission_version = dispatch_permission_version + 1
+        WHERE dispatch_permission_version = #{version}
   </update>
 
   <update id="delete" parameterType="Long">
@@ -75,14 +81,14 @@
       role.id = role_permission.role_id AND role_permission.permission_id = #{filter.permissionId}
     </if>
     WHERE
-      1 = 1
+      removed_at IS NULL
     <if test="filter.name != null and filter.name != ''">  
-        AND role.name like "%"#{filter.name}"%"
+      AND role.name LIKE "%"#{filter.name}"%"
     </if>
     <if test="!sorters.isEmpty()">
     ORDER BY
       <foreach collection="list" item="sorters" open=" " close=" " separator=",">
-            user.#{item.fieldName} #{item.sort}
+        user.#{item.fieldName} #{item.sort}
       </foreach>
     </if>
     LIMIT #{offset}, <choose><when test="size > 0">#{size}</when><otherwise>20</otherwise></choose>

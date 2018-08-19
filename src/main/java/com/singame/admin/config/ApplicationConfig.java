@@ -4,7 +4,6 @@ package com.singame.admin.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.singame.admin.interceptor.JwtInterceptor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -19,13 +18,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 @EnableTransactionManagement
 public class ApplicationConfig extends WebMvcConfigurationSupport {
-
-  @Value("${jwt.header}")
-  private String jwtHeaderKey;
-  @Value("${jwt.prefix}")
-  private String jwtHeaderPrefix;
-  @Value("${jwt.sceret}")
-  private String jwtSceret;
 
   @Bean
   public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
@@ -49,7 +41,7 @@ public class ApplicationConfig extends WebMvcConfigurationSupport {
   
   @Bean
   public JwtInterceptor jwtInterceptor() {
-    return new JwtInterceptor(jwtHeaderKey, jwtHeaderPrefix, jwtSceret);
+    return new JwtInterceptor();
   }
   @Override
   public void addInterceptors(InterceptorRegistry registry) {

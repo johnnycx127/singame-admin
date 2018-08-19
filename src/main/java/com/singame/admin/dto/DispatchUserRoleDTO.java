@@ -21,4 +21,6 @@ public class DispatchUserRoleDTO {
   private Long userId;
   @ApiModelProperty(value="角色ID列表, 如果为空列表则将清空所有用户角色", required=true)
   private List<Long> roleIdList;
+  @ApiModelProperty(value="版本信息")
+  private Integer version;
 }

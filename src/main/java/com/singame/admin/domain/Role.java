@@ -21,6 +21,7 @@ public class Role {
   private LocalDateTime updatedAt;
   private LocalDateTime removedAt;
   private Integer version;
+  private Integer dispatchPermissionVersion;
 
   public RoleDTO toConvertDTO() {
     RoleDTO roleDTO = new RoleDTO();
@@ -32,6 +33,8 @@ public class Role {
     roleDTO.setUpdatedAt(updatedAt);
     roleDTO.setRemovedBy(removedBy);
     roleDTO.setRemovedAt(removedAt);
+    roleDTO.setVersion(version);
+    roleDTO.setDispatchPermissionVersion(dispatchPermissionVersion);
     return roleDTO;
   }
 }

@@ -75,7 +75,7 @@ public class AuthCtrl {
     }
   }
 
-  @RequestMapping(value = "signin", method = RequestMethod.POST)
+  @RequestMapping(value="signin", method=RequestMethod.POST)
   public ResponseEntity<SigninResponse> login(@RequestBody final UserDTO login, HttpServletRequest request) throws BadRequestException {
     if (Strings.isNullOrEmpty(login.getName())) {
       throw new BadRequestException("Invalid login");
@@ -102,7 +102,7 @@ public class AuthCtrl {
     return null;
   }
   
-  @RequestMapping(value = "token/refresh", method = RequestMethod.POST)
+  @RequestMapping(value="token/refresh", method=RequestMethod.POST)
   public ResponseEntity<SigninResponse> refreshtoken(@RequestBody final TokenObj tokenObj, HttpServletRequest request) throws Exception {
     String newToken = JwtUtil.refreshToken(tokenObj.refreshToken, jwtSceret, jwtExpiredTime);
     if (Strings.isNullOrEmpty(newToken)) {
@@ -113,7 +113,7 @@ public class AuthCtrl {
   }
   
 
-  @RequestMapping(value = "signup", method = RequestMethod.POST)
+  @RequestMapping(value="signup", method=RequestMethod.POST)
   public ResponseEntity<Long> register(@RequestBody final UserDTO userDTO, HttpServletRequest request) throws BadRequestException {
     String scretedPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
     UserDTO u = new UserDTO();
@@ -126,7 +126,7 @@ public class AuthCtrl {
     return new ResponseEntity<Long>(id, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "logout", method = RequestMethod.GET)
+  @RequestMapping(value="logout", method=RequestMethod.GET)
   public ResponseEntity<String> logout(HttpServletRequest request)
       throws BadRequestException {
     try {

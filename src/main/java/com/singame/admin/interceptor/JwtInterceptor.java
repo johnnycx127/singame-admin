@@ -5,12 +5,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.singame.admin.exception.UnauthorizedException;
+import com.singame.admin.common.ReqAttrKey;
 import com.singame.admin.dto.UserAuthDTO;
 import com.singame.admin.utils.JwtUtil;
 import com.google.common.base.Strings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,35 +23,31 @@ public class JwtInterceptor implements HandlerInterceptor {
   private Logger logger = LoggerFactory.getLogger(JwtInterceptor.class);
   @Resource
   private RedisTemplate<String, UserAuthDTO> redisTemplate;
-
-  private String jwtHeader;
-  private String jwtHeaderPrefix;
-  private String jwtSceret;
-
-  public JwtInterceptor(String jwtHeaderKey, String jwtHeaderPrefix, String jwtSceret) {
-    this.jwtHeader = jwtHeaderKey;
-    this.jwtHeaderPrefix = jwtHeaderPrefix;
-    this.jwtSceret = jwtSceret;
-  }
+  @Value("${jwt.header.token.key}")
+  private String JWT_TOKEN_KEY;
+  @Value("${jwt.prefix}")
+  private String JWT_HEADER_PREFIX;
+  @Value("${jwt.sceret}")
+  private String JWT_SECRET;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse reponse, Object handle) throws Exception {
     logger.debug("拦截器1执行-----preHandle");
-    String authHeader = request.getHeader(jwtHeader);
-    if (Strings.isNullOrEmpty(authHeader) || !authHeader.startsWith(jwtHeaderPrefix)) {
+    String authHeader = request.getHeader(JWT_TOKEN_KEY);
+    if (Strings.isNullOrEmpty(authHeader) || !authHeader.startsWith(JWT_HEADER_PREFIX)) {
       throw new UnauthorizedException();
     }
-    String token = authHeader.substring(jwtHeaderPrefix.length() + 1);
+    String token = authHeader.substring(JWT_HEADER_PREFIX.length() + 1);
     try {
-      if (!JwtUtil.validateToken(token, jwtSceret)) {
+      if (!JwtUtil.validateToken(token, JWT_SECRET)) {
         throw new UnauthorizedException("token 过期");
       }
-      String userId = JwtUtil.getSessionId(token, jwtSceret);
+      String userId = JwtUtil.getSessionId(token, JWT_SECRET);
       UserAuthDTO userAuth = redisTemplate.opsForValue().get(userId);
       if (userAuth == null) {
         throw new UnauthorizedException("token 过期");
       }
-      request.setAttribute("auth", userAuth);
+      request.setAttribute(ReqAttrKey.REQ_USER_AUTH_KEY, userAuth);
     } catch (Exception e) {
       logger.error("error when parse token ======" + e.getMessage());
       throw new UnauthorizedException("token 过期");

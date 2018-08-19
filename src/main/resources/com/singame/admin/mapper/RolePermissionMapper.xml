@@ -1,0 +1,52 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.singame.admin.mapper.RolePermissionMapper">
+  <insert id="add">
+    INSERT INTO role_permission (role_id, permission_id)
+      SELECT #{roleId}, #{permissionId} FROM
+        user
+      WHERE
+        user.dispatch_permission_version = #{version}
+  </insert>
+
+  <delete id="delete">
+    DELETE role_permission.* FROM
+      role_permission
+    INNER JOIN
+      role
+    ON
+      role.id = role_permission.role_id AND
+      role.dispatch_dispatch_version = #{version} AND
+      role.id = #{roleId}
+    WHERE
+      user_role.role_id = #{roleId}
+  </delete>
+
+  <delete id="bulkDelete">
+    DELETE role_permission.* FROM
+      role_permission
+    INNER JOIN
+      role
+    ON
+      role.id = role_permission.role_id AND
+      role.dispatch_permission_version = #{version} AND
+      role.id = #{roleId}
+    WHERE
+    <foreach collection="list" item="permissionIdList" open=" " close=" " separator="OR">
+        role_permission.permission_id = #{item}
+    </foreach>
+  </delete>
+
+  <delete id="clear">
+    DELETE role_permission.* FROM
+      role_permission
+    INNER JOIN
+      role
+    ON
+      role.id = role_permission.role_id AND
+      role.dispatch_permission_version = #{version}
+      role.id = #{roleId}
+  </delete>
+</mapper>

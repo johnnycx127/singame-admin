@@ -21,4 +21,6 @@ public class DispatchRolePermissionDTO {
   private Long roleId;
   @ApiModelProperty(value="权限ID列表, 如果是空列表则清空角色权限", required=true)
   private List<Long> permissionIdList;
+  @ApiModelProperty(value="版本信息")
+  private Integer version;
 }
