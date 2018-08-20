@@ -9,4 +9,5 @@ import lombok.ToString;
 @ToString
 public class DepartmentFilter {
   private String name;
+  private String namePartten;
 }

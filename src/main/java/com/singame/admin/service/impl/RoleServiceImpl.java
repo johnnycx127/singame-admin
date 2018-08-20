@@ -7,6 +7,7 @@ import com.singame.admin.domain.Permission;
 import com.singame.admin.domain.Role;
 import com.singame.admin.domain.User;
 import com.singame.admin.exception.DataConflictException;
+import com.singame.admin.exception.DuplicateRecordException;
 import com.singame.admin.exception.NotFoundException;
 import com.singame.admin.mapper.PermissionMapper;
 import com.singame.admin.mapper.RoleMapper;
@@ -35,9 +36,23 @@ public class RoleServiceImpl implements RoleService {
   @Autowired
   private RolePermissionMapper rolePermissionMapper;
 
+  private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
+    RoleFilter filter = new RoleFilter();
+    filter.setName(name);
+    Query<RoleFilter> query = new Query<>();
+    List<Role> roles = roleMapper.list(query);
+    if (roles.size() > 1) {
+      throw new DuplicateRecordException("名称重复");
+    }
+    if (roles.size() > 0 && roles.get(1).getId() != id) {
+      throw new DuplicateRecordException("名称重复");
+    }
+  }
+
   @Override
   @Transactional
-	public Long create(Role role, User operator) {
+	public Long create(Role role, User operator) throws DuplicateRecordException {
+    isDuplicatedName(role.getId(), role.getName());
     role.setCreatedBy(operator.getId());
     role.setCreatedAt(LocalDateTime.now());
     role.setUpdatedBy(operator.getId());
@@ -49,7 +64,7 @@ public class RoleServiceImpl implements RoleService {
 
   @Override
   @Transactional
-	public void update(Role role, User operator) throws NotFoundException, DataConflictException {
+	public void update(Role role, User operator) throws DuplicateRecordException, NotFoundException, DataConflictException {
     Role updatingRole = roleMapper.getById(role.getId());
     if (updatingRole == null) {
       throw new NotFoundException();
@@ -58,6 +73,7 @@ public class RoleServiceImpl implements RoleService {
     updatingRole.setVersion(role.getVersion());
     updatingRole.setUpdatedBy(operator.getId());
     updatingRole.setUpdatedAt(LocalDateTime.now());
+    isDuplicatedName(updatingRole.getId(), updatingRole.getName());
     if (roleMapper.update(updatingRole) == 0) {
       throw new DataConflictException();
     }

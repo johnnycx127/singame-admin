@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.singame.admin.domain.Role;
 import com.singame.admin.domain.User;
 import com.singame.admin.exception.DataConflictException;
+import com.singame.admin.exception.DuplicateRecordException;
 import com.singame.admin.exception.NotFoundException;
 import com.singame.admin.mapper.RoleMapper;
 import com.singame.admin.mapper.UserMapper;
@@ -33,9 +34,32 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private UserRoleMapper userRoleMapper;
 
+  private void isDuplicatedCode(Long id, String code) throws DuplicateRecordException {
+    User user = userMapper.getByCode(code);
+    if (user != null && user.getId() != id) {
+      throw new DuplicateRecordException("用户编码重复");
+    }
+  }
+
+  private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
+    UserFilter userFilter = new UserFilter();
+    userFilter.setName(name);
+    Query<UserFilter> userQuery = new Query<>();
+    userQuery.setFilter(userFilter);
+    List<User> users = userMapper.list(userQuery);
+    if (users.size() > 1) {
+      throw new DuplicateRecordException("用户名称重复");
+    }
+    if (users.size() > 0 && users.get(1).getId() != id) {
+      throw new DuplicateRecordException("用户名称重复");
+    }
+  }
+
   @Override
   @Transactional
-  public Long create(User user) {
+  public Long create(User user) throws DuplicateRecordException {
+    isDuplicatedCode(user.getId(), user.getCode());
+    isDuplicatedName(user.getId(), user.getName());
     user.setStatus(UserStatus.AVAILABLE);
     user.setCreatedAt(LocalDateTime.now());
     user.setUpdatedAt(LocalDateTime.now());
@@ -44,7 +68,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Long create(User user, User operator) {
+  public Long create(User user, User operator) throws DuplicateRecordException {
+    isDuplicatedCode(user.getId(), user.getCode());
+    isDuplicatedName(user.getId(), user.getName());
     user.setStatus(UserStatus.AVAILABLE);
     user.setCreatedBy(operator.getId());
     user.setUpdatedBy(operator.getId());
@@ -55,7 +81,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void update(User user) throws NotFoundException, DataConflictException {
+  public void update(User user) 
+      throws DuplicateRecordException, NotFoundException, DataConflictException {
     User updatingUser = userMapper.getById(user.getId());
     if (updatingUser == null) {
       throw new NotFoundException();
@@ -69,6 +96,8 @@ public class UserServiceImpl implements UserService {
     updatingUser.setUpdatedBy(user.getId());
     updatingUser.setUpdatedAt(LocalDateTime.now());
     updatingUser.setVersion(user.getVersion());
+    isDuplicatedCode(updatingUser.getId(), updatingUser.getCode());
+    isDuplicatedName(updatingUser.getId(), updatingUser.getName());
     if (userMapper.update(updatingUser) == 0) {
       throw new DataConflictException();
     }
@@ -76,7 +105,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void update(User user, User operator) throws NotFoundException, DataConflictException {
+  public void update(User user, User operator) 
+      throws DuplicateRecordException, NotFoundException, DataConflictException {
     User updatingUser = userMapper.getById(user.getId());
     if (updatingUser == null) {
       throw new NotFoundException();
@@ -90,6 +120,8 @@ public class UserServiceImpl implements UserService {
     updatingUser.setUpdatedBy(operator.getId());
     updatingUser.setUpdatedAt(LocalDateTime.now());
     updatingUser.setVersion(user.getVersion());
+    isDuplicatedCode(updatingUser.getId(), updatingUser.getCode());
+    isDuplicatedName(updatingUser.getId(), updatingUser.getName());
     if (userMapper.update(updatingUser) == 0) {
       throw new DataConflictException();
     }

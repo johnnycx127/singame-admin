@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public class RoleFilter {
   private String name;
+  private String namePartten;
   private Long userId;
   private Long permissionId;
 }

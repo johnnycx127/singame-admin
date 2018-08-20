@@ -4,15 +4,16 @@ import java.util.List;
 
 import com.singame.admin.domain.User;
 import com.singame.admin.exception.DataConflictException;
+import com.singame.admin.exception.DuplicateRecordException;
 import com.singame.admin.exception.NotFoundException;
 import com.singame.admin.query.Query;
 import com.singame.admin.query.filter.UserFilter;
 
 public interface UserService {
-  Long create(User user);
-  Long create(User user, User operator);
-  void update(User user) throws NotFoundException, DataConflictException;
-  void update(User user, User operator) throws NotFoundException, DataConflictException;
+  Long create(User user) throws DuplicateRecordException;
+  Long create(User user, User operator) throws DuplicateRecordException;
+  void update(User user) throws DuplicateRecordException, NotFoundException, DataConflictException;
+  void update(User user, User operator) throws DuplicateRecordException, NotFoundException, DataConflictException;
   User getById(Long id) throws NotFoundException;
   User getByCode(String Code) throws NotFoundException;
   List<User> list(Query<UserFilter> query);

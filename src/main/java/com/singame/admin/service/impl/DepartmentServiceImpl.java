@@ -5,6 +5,7 @@ import java.util.List;
 import com.singame.admin.domain.Department;
 import com.singame.admin.domain.User;
 import com.singame.admin.exception.DataConflictException;
+import com.singame.admin.exception.DuplicateRecordException;
 import com.singame.admin.exception.NotFoundException;
 import com.singame.admin.mapper.DepartmentMapper;
 import com.singame.admin.query.Query;
@@ -25,9 +26,24 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Autowired
   private DepartmentMapper departmentMapper;
 
+  private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
+    DepartmentFilter filter = new DepartmentFilter();
+    filter.setName(name);
+    Query<DepartmentFilter> query = new Query<>();
+    query.setFilter(filter);
+    List<Department> depts = departmentMapper.list(query);
+    if (depts.size() > 1) {
+      throw new DuplicateRecordException();
+    }
+    if (depts.size() > 0 && depts.get(1).getId() != id) {
+      throw new DuplicateRecordException();
+    }
+  }
+
   @Override
   @Transactional
-  public Long create(Department department, User operator) {
+  public Long create(Department department, User operator) throws DuplicateRecordException {
+    isDuplicatedName(department.getId(), department.getName());
     department.setCreatedBy(operator.getId());
     department.setCreatedAt(LocalDateTime.now());
     department.setUpdatedBy(operator.getId());
@@ -39,7 +55,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   @Transactional
-  public void update(Department department, User operator) throws NotFoundException, DataConflictException {
+  public void update(Department department, User operator) throws DuplicateRecordException, NotFoundException, DataConflictException {
     Department updatingDept = departmentMapper.getById(department.getId());
     if (updatingDept == null) {
       throw new NotFoundException();
@@ -47,6 +63,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     updatingDept.setUpdatedBy(operator.getId());
     updatingDept.setUpdatedAt(LocalDateTime.now());
     updatingDept.setVersion(department.getVersion());
+    isDuplicatedName(updatingDept.getId(), updatingDept.getName());
     if (departmentMapper.update(updatingDept) == 0) {
       throw new DataConflictException();
     }

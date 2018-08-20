@@ -65,8 +65,11 @@
       department
     WHERE
       removed_at IS NULL AND
-    <if test="filter.name != null and filter.name != ''">  
-      AND name LIKE "%"#{filter.name}"%"
+    <if test="filter.namePartten != null and filter.namePartten != ''">  
+      AND name LIKE "%"#{filter.namePartten}"%"
+    </if>
+    <if test="filter.name != null and filter.name != ''">
+      AND name = #{filter.name}
     </if>
     <if test="!sorters.isEmpty()">
       ORDER BY

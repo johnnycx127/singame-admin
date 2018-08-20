@@ -17,8 +17,10 @@ import com.singame.admin.domain.User;
 import com.singame.admin.dto.LoginDTO;
 import com.singame.admin.dto.TokenRespDTO;
 import com.singame.admin.dto.UserAuthDTO;
+import com.singame.admin.exception.ApiException;
 import com.singame.admin.exception.BadRequestException;
-import com.singame.admin.exception.InternalServerException;
+import com.singame.admin.exception.DuplicateRecordException;
+import com.singame.admin.exception.InteralException;
 import com.singame.admin.exception.NotFoundException;
 import com.singame.admin.exception.UnauthorizedException;
 import com.singame.admin.query.Query;
@@ -90,7 +92,7 @@ public class AuthCtrl {
   @RequestMapping(value="signin", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
   public ResponseBody<TokenRespDTO> login(
       @RequestBody final LoginDTO loginReq,
-      HttpServletRequest request) throws BadRequestException, NotFoundException, InternalServerException {
+      HttpServletRequest request) throws BadRequestException, NotFoundException, InteralException {
     if (Strings.isNullOrEmpty(loginReq.getCode())) {
       throw new BadRequestException("Invalid login");
     }
@@ -125,7 +127,7 @@ public class AuthCtrl {
     String token = JwtUtil.createToken(sessionId, jwtSceret, jwtExpiredTime);
     String refreshToken = JwtUtil.getRefreshToken(sessionId, jwtSceret, jwtExpiredWeekTime);
     if (Strings.isNullOrEmpty(token) || Strings.isNullOrEmpty(refreshToken)) {
-      throw new InternalServerException();
+      throw new InteralException();
     }
     return new ResponseBody<>(ReplyBizStatus.OK, "success", new TokenRespDTO(token, refreshToken));
   }
@@ -160,7 +162,7 @@ public class AuthCtrl {
   @RequestMapping(value="signup", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
   public ResponseBody<Long> signup(
       @RequestBody final LoginDTO loginDTO,
-      HttpServletRequest request) throws BadRequestException {
+      HttpServletRequest request) throws DuplicateRecordException, BadRequestException {
     String scretedPass = BCrypt.hashpw(loginDTO.getPassword(), BCrypt.gensalt());
     User u = new User();
     u.setName(loginDTO.getCode());

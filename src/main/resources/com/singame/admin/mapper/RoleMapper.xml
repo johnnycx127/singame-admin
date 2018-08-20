@@ -82,8 +82,11 @@
     </if>
     WHERE
       removed_at IS NULL
-    <if test="filter.name != null and filter.name != ''">  
-      AND role.name LIKE "%"#{filter.name}"%"
+    <if test="filter.namePartten != null and filter.namePartten != ''">  
+      AND role.name LIKE "%"#{filter.namePartten}"%"
+    </if>
+    <if test="filter.name != null and filter.name != ''">
+      AND role.name = #{filter.name}
     </if>
     <if test="!sorters.isEmpty()">
     ORDER BY

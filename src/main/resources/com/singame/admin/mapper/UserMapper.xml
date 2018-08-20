@@ -79,11 +79,17 @@
     </if>
     WHERE
       1 = 1
-    <if test="filter.code != null and filter.code != ''">  
-		  AND user.code LIKE "%"#{filter.code}"%"
+    <if test="filter.codePartten != null and filter.codePartten != ''">  
+		  AND user.code LIKE "%"#{filter.codePartten}"%"
     </if>
-    <if test="filter.name != null and filter.name != ''">  
-		  AND user.name LIKE "%"#{filter.name}"%"
+    <if test="filter.namePartten != null and filter.namePartten != ''">  
+		  AND user.name LIKE "%"#{filter.namePartten}"%"
+    </if>
+    <if test="filter.code != null and filter.code != ''">
+      AND user.code = #{filter.code}
+    </if>
+    <if test="filter.name != null and filter.name != ''">
+      AND user.name = #{filter.name}
     </if>
     <if test="filter.gender != null">  
 		  AND user.gender = #{filter.gender}

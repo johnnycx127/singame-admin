@@ -86,14 +86,23 @@
     </if>
     WHERE
       permission.removed_at IS NULL
-    <if test="filter.name != null and filter.name != ''">
-      AND permission.name LIKE "%"#{filter.name}"%"
+    <if test="filter.namePartten != null and filter.namePartten != ''">
+      AND permission.name LIKE "%"#{filter.namePartten}"%"
     </if>
-    <if test="filter.code != null and filter.code !=''">
-      AND permission.code LIKE "%"#{filter.code}"%"
+    <if test="filter.name != null and filter.name != ''">
+      AND permission.name = #{filter.name}
+    </if>
+    <if test="filter.codePartten != null and filter.codePartten !=''">
+      AND permission.code LIKE "%"#{filter.codePartten}"%"
+    </if>
+    <if test="filter.code != null and filter.code != ''">
+      AND permission.code = #{filter.code}
+    </if>
+    <if test="filter.resourcePrefix != null and filter.resourcePrefix != ''">
+      AND permission.resource LIKE #{filter.resourcePrefix}"%"
     </if>
     <if test="filter.resource != null and filter.resource != ''">
-      AND permission.resource LIKE "%"#{filter.resource}"%"
+      AND permission.resource = #{filter.resource}
     </if>
     <if test="filter.action != null">
       AND permission.action = #{filter.action}

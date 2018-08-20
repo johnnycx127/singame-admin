@@ -12,7 +12,9 @@ import lombok.ToString;
 @ToString
 public class UserFilter {
   private String code;
+  private String codePartten;
   private String name;
+  private String namePartten;
   private Gender gender;
   private UserStatus status;
   private Long roleId;

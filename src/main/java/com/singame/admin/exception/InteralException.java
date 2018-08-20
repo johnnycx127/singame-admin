@@ -5,12 +5,12 @@ import com.singame.admin.common.ReplyBizStatus;
 import lombok.Getter;
 
 @Getter
-public class InternalServerException extends ApiException {
-  public InternalServerException() {
-    this("interal exception");
+public class InteralException extends ApiException {
+  public InteralException() {
+    this("Interal Service error");
   }
 
-  public InternalServerException(String msg) {
+  public InteralException(String msg) {
     super(ReplyBizStatus.INTERNAL_SERVER_ERROR, msg);
   }
 }

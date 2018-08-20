@@ -3,8 +3,10 @@ package com.singame.admin.service.impl;
 import com.singame.admin.domain.Permission;
 import com.singame.admin.domain.User;
 import com.singame.admin.exception.DataConflictException;
+import com.singame.admin.exception.DuplicateRecordException;
 import com.singame.admin.exception.NotFoundException;
 import com.singame.admin.service.PermissionService;
+import com.singame.admin.vo.PermissionAction;
 import com.singame.admin.query.Query;
 import com.singame.admin.query.filter.PermissionFilter;
 import com.singame.admin.mapper.PermissionMapper;
@@ -24,9 +26,47 @@ public class PermissionServiceImpl implements PermissionService {
   @Autowired
   PermissionMapper permissionMapper;
 
+  private void isDuplicatedCode(Long id, String code) throws DuplicateRecordException {
+    Permission p = permissionMapper.getByCode(code);
+    if (p != null && p.getId() != id) {
+      throw new DuplicateRecordException();
+    }
+  }
+
+  private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
+    PermissionFilter filter = new PermissionFilter();
+    filter.setName(name);
+    Query<PermissionFilter> query = new Query<>();
+    List<Permission> permissions = permissionMapper.list(query);
+    if (permissions.size() > 1) {
+      throw new DuplicateRecordException();
+    }
+    if (permissions.size() > 0 && permissions.get(1).getId() != id) {
+      throw new DuplicateRecordException();
+    }
+  }
+
+  private void isDuplicatedResourceAndAction(Long id, String resource, PermissionAction action)
+      throws DuplicateRecordException {
+    PermissionFilter filter = new PermissionFilter();
+    filter.setResource(resource);
+    filter.setAction(action);
+    Query<PermissionFilter> query = new Query<>();
+    List<Permission> permissions = permissionMapper.list(query);
+    if (permissions.size() > 1) {
+      throw new DuplicateRecordException();
+    }
+    if (permissions.size() > 0 && permissions.get(1).getId() != id) {
+      throw new DuplicateRecordException();
+    }
+  }
+
   @Override
   @Transactional
-  public Long create(Permission permission, User operator) {
+  public Long create(Permission permission, User operator) throws DuplicateRecordException {
+    isDuplicatedCode(permission.getId(), permission.getCode());
+    isDuplicatedName(permission.getId(), permission.getName());
+    isDuplicatedResourceAndAction(permission.getId(), permission.getResource(), permission.getAction());
     permission.setCreatedBy(operator.getId());
     permission.setCreatedAt(LocalDateTime.now());
     permission.setUpdatedBy(operator.getId());
@@ -37,7 +77,7 @@ public class PermissionServiceImpl implements PermissionService {
   }
   @Override
   @Transactional
-  public void update(Permission permission, User operator) throws NotFoundException, DataConflictException {
+  public void update(Permission permission, User operator) throws DuplicateRecordException, NotFoundException, DataConflictException {
     Permission updatingPermission = permissionMapper.getById(permission.getId());
     if (updatingPermission == null) {
       throw new NotFoundException();
@@ -51,6 +91,9 @@ public class PermissionServiceImpl implements PermissionService {
     updatingPermission.setUpdatedBy(operator.getId());
     updatingPermission.setUpdatedAt(LocalDateTime.now());
     updatingPermission.setVersion(permission.getVersion());
+    isDuplicatedCode(updatingPermission.getId(), updatingPermission.getCode());
+    isDuplicatedName(updatingPermission.getId(), updatingPermission.getName());
+    isDuplicatedResourceAndAction(updatingPermission.getId(), updatingPermission.getResource(), updatingPermission.getAction());
     if (permissionMapper.update(updatingPermission) == 0) {
       throw new DataConflictException();
     }
