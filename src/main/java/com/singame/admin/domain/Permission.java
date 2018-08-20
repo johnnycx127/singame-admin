@@ -6,12 +6,14 @@ import com.singame.admin.vo.PermissionAction;
 import org.joda.time.LocalDateTime;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode(of="id")
 public class Permission {
   private Long id;
   private String code;

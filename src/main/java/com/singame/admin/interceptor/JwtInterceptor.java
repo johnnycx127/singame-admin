@@ -42,8 +42,8 @@ public class JwtInterceptor implements HandlerInterceptor {
       if (!JwtUtil.validateToken(token, JWT_SECRET)) {
         throw new UnauthorizedException("token 过期");
       }
-      String userId = JwtUtil.getSessionId(token, JWT_SECRET);
-      UserAuthDTO userAuth = redisTemplate.opsForValue().get(userId);
+      String sessionId = JwtUtil.getSessionId(token, JWT_SECRET);
+      UserAuthDTO userAuth = redisTemplate.opsForValue().get(sessionId);
       if (userAuth == null) {
         throw new UnauthorizedException("token 过期");
       }

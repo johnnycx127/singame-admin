@@ -7,6 +7,7 @@ import com.singame.admin.vo.UserStatus;
 import org.joda.time.LocalDateTime;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode(of="id")
 public class User {
   private Long id;
   @NonNull String code;

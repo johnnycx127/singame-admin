@@ -35,6 +35,15 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
+  public Long create(User user) {
+    user.setStatus(UserStatus.AVAILABLE);
+    user.setCreatedAt(LocalDateTime.now());
+    user.setUpdatedAt(LocalDateTime.now());
+    return userMapper.add(user);
+  }
+
+  @Override
+  @Transactional
   public Long create(User user, User operator) {
     user.setStatus(UserStatus.AVAILABLE);
     user.setCreatedBy(operator.getId());
@@ -42,6 +51,27 @@ public class UserServiceImpl implements UserService {
     user.setCreatedAt(LocalDateTime.now());
     user.setUpdatedAt(LocalDateTime.now());
     return userMapper.add(user);
+  }
+
+  @Override
+  @Transactional
+  public void update(User user) throws NotFoundException, DataConflictException {
+    User updatingUser = userMapper.getById(user.getId());
+    if (updatingUser == null) {
+      throw new NotFoundException();
+    }
+    updatingUser.setCode(user.getCode());
+    updatingUser.setName(user.getName());
+    updatingUser.setGender(user.getGender());
+    updatingUser.setDepartmentId(user.getDepartmentId());
+    updatingUser.setIsDepartmentMaster(user.getIsDepartmentMaster());
+    updatingUser.setPosition(user.getPosition());
+    updatingUser.setUpdatedBy(user.getId());
+    updatingUser.setUpdatedAt(LocalDateTime.now());
+    updatingUser.setVersion(user.getVersion());
+    if (userMapper.update(updatingUser) == 0) {
+      throw new DataConflictException();
+    }
   }
 
   @Override

@@ -12,6 +12,7 @@ import org.joda.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
@@ -19,6 +20,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="UserDTO", description="用户返回结果")
 public class UserDTO {
@@ -26,9 +28,6 @@ public class UserDTO {
   @ApiModelProperty(value="编码", required=true)
   @NonNull
   private String code;
-  @ApiModelProperty(value="密码", required=true)
-  @NonNull
-  private String password;
   @ApiModelProperty(value="姓名", required=true)
   @NonNull
   private String name;

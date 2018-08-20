@@ -5,12 +5,14 @@ import com.singame.admin.dto.DepartmentDTO;
 import org.joda.time.LocalDateTime;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode(of="id")
 public class Department {
   private Long id;
   private Long pid;

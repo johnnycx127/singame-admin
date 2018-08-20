@@ -5,12 +5,14 @@ import com.singame.admin.dto.RoleDTO;
 import org.joda.time.LocalDateTime;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode(of="id")
 public class Role {
   private Long id;
   private String name;

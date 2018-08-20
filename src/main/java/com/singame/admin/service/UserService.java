@@ -9,7 +9,9 @@ import com.singame.admin.query.Query;
 import com.singame.admin.query.filter.UserFilter;
 
 public interface UserService {
+  Long create(User user);
   Long create(User user, User operator);
+  void update(User user) throws NotFoundException, DataConflictException;
   void update(User user, User operator) throws NotFoundException, DataConflictException;
   User getById(Long id) throws NotFoundException;
   User getByCode(String Code) throws NotFoundException;

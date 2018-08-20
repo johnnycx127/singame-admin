@@ -10,12 +10,14 @@ import org.joda.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="DepartmentDTO", description="部门")
 public class DepartmentDTO {

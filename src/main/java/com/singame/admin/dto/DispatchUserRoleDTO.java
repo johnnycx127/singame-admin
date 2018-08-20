@@ -8,12 +8,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="DispatchUserRoleDTO", description="为用户分配权限的请求")
 public class DispatchUserRoleDTO {
