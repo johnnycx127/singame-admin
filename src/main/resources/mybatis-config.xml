@@ -13,7 +13,11 @@
         <typeHandler handler="com.singame.admin.utils.MybatisLocalDateTimeTypeHandler" javaType="org.joda.time.LocalDateTime"/>
     </typeHandlers>
     <mappers>
-        <mapper resource="com/singame/admin/mapper/UserMapper.xml"/>
-        <mapper resource="com/singame/admin/mapper/PermissionMapper.xml"/>
+      <mapper resource="com/singame/admin/mapper/DepartmentMapper.xml"/>
+      <mapper resource="com/singame/admin/mapper/RoleMapper.xml"/>
+      <mapper resource="com/singame/admin/mapper/UserMapper.xml"/>
+      <mapper resource="com/singame/admin/mapper/PermissionMapper.xml"/>
+      <mapper resource="com/singame/admin/mapper/UserRoleMapper.xml"/>
+      <mapper resource="com/singame/admin/mapper/RolePermissionMapper.xml"/>
     </mappers>
 </configuration>

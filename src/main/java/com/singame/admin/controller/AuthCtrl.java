@@ -10,14 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.singame.admin.common.ReplyBizStatus;
 import com.singame.admin.common.ReqAttrKey;
-import com.singame.admin.common.ResponseBody;
+import com.singame.admin.common.Reply;
 import com.singame.admin.domain.Permission;
 import com.singame.admin.domain.Role;
 import com.singame.admin.domain.User;
 import com.singame.admin.dto.LoginDTO;
 import com.singame.admin.dto.TokenRespDTO;
 import com.singame.admin.dto.UserAuthDTO;
-import com.singame.admin.exception.ApiException;
+import com.singame.admin.dto.UserDTO;
 import com.singame.admin.exception.BadRequestException;
 import com.singame.admin.exception.DuplicateRecordException;
 import com.singame.admin.exception.InteralException;
@@ -47,15 +47,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiParam;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthCtrl {
   private Logger logger = LoggerFactory.getLogger(AuthCtrl.class);
 
@@ -81,17 +78,9 @@ public class AuthCtrl {
 
 
   @ApiOperation(value="登录", notes="登录")
-  @ApiImplicitParams({
-    @ApiImplicitParam(name="loginReq", value="登录信息", required=true, dataType="LoginReq", paramType="body")
-  })
-  @ApiResponses({
-    @ApiResponse(code=200, message="Success", response=ResponseBody.class),
-    @ApiResponse(code=400, message="Bad Request", response=ResponseBody.class),
-    @ApiResponse(code=500, message="Server Interal Error", response=ResponseBody.class)
-  })
   @RequestMapping(value="signin", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-  public ResponseBody<TokenRespDTO> login(
-      @RequestBody final LoginDTO loginReq,
+  public Reply<TokenRespDTO> login(
+      @ApiParam @RequestBody final LoginDTO loginReq,
       HttpServletRequest request) throws BadRequestException, NotFoundException, InteralException {
     if (Strings.isNullOrEmpty(loginReq.getCode())) {
       throw new BadRequestException("Invalid login");
@@ -129,59 +118,39 @@ public class AuthCtrl {
     if (Strings.isNullOrEmpty(token) || Strings.isNullOrEmpty(refreshToken)) {
       throw new InteralException();
     }
-    return new ResponseBody<>(ReplyBizStatus.OK, "success", new TokenRespDTO(token, refreshToken));
+    return new Reply<>(ReplyBizStatus.OK, "success", new TokenRespDTO(token, refreshToken));
   }
   
   @ApiOperation(value="刷新Token", notes="刷新Token")
-  @ApiImplicitParams({
-    @ApiImplicitParam(name="refreshToken", value="刷新Token", required=true, dataType="String", paramType="query")
-  })
-  @ApiResponses({
-    @ApiResponse(code=200, message="Success", response=ResponseBody.class),
-    @ApiResponse(code=400, message="Bad Request", response=ResponseBody.class),
-    @ApiResponse(code=500, message="Server Interal Error", response=ResponseBody.class)
-  })
   @RequestMapping(value="token/refresh", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-  public ResponseBody<TokenRespDTO> refreshtoken(@RequestParam("refreshToken") final String refreshToken, HttpServletRequest request) throws Exception {
+  public Reply<TokenRespDTO> refreshtoken(
+      @ApiParam @RequestParam("refreshToken") final String refreshToken) throws Exception {
     String newToken = JwtUtil.refreshToken(refreshToken, jwtSceret, jwtExpiredTime);
     if (Strings.isNullOrEmpty(newToken)) {
       throw new UnauthorizedException("token 过期，请重新登录");
     }
-    return new ResponseBody<>(ReplyBizStatus.OK, "success", new TokenRespDTO(newToken, refreshToken));
+    return new Reply<>(ReplyBizStatus.OK, "success", new TokenRespDTO(newToken, refreshToken));
   }
 
   @ApiOperation(value="注册", notes="注册")
-  @ApiImplicitParams({
-    @ApiImplicitParam(name="loginReq", value="登录信息", required=true, dataType="LoginReq", paramType="body")
-  })
-  @ApiResponses({
-    @ApiResponse(code=200, message="Success", response=ResponseBody.class),
-    @ApiResponse(code=400, message="Bad Request", response=ResponseBody.class),
-    @ApiResponse(code=500, message="Server Interal Error", response=ResponseBody.class)
-  })
   @RequestMapping(value="signup", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-  public ResponseBody<Long> signup(
-      @RequestBody final LoginDTO loginDTO,
-      HttpServletRequest request) throws DuplicateRecordException, BadRequestException {
+  public Reply<UserDTO> signup(
+      @ApiParam @RequestBody final LoginDTO loginDTO)
+      throws DuplicateRecordException, BadRequestException {
     String scretedPass = BCrypt.hashpw(loginDTO.getPassword(), BCrypt.gensalt());
     User u = new User();
     u.setName(loginDTO.getCode());
     u.setPassword(scretedPass);
-    Long id = userService.create(u);
-    return new ResponseBody<>(ReplyBizStatus.OK, "success", id);
+    userService.create(u);
+    return new Reply<>(ReplyBizStatus.OK, "success", u.toConvertDTO());
   }
 
   @ApiOperation(value="登出", notes="登出")
-  @ApiResponses({
-    @ApiResponse(code=200, message="Success", response=ResponseBody.class),
-    @ApiResponse(code=400, message="Bad Request", response=ResponseBody.class),
-    @ApiResponse(code=500, message="Server Interal Error", response=ResponseBody.class)
-  })
   @RequestMapping(value="logout", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-  public ResponseBody<?> logout(@RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth)
+  public Reply<?> logout(@RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth)
       throws BadRequestException {
     String sessionId = SignatureUtil.sha256(userAuth.getUser().getId().toString());
     redisTemplate.delete(sessionId);
-    return new ResponseBody<>(ReplyBizStatus.OK, "success");
+    return new Reply<>(ReplyBizStatus.OK, "success");
   }
 }

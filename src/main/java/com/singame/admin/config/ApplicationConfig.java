@@ -12,7 +12,9 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
@@ -43,11 +45,39 @@ public class ApplicationConfig extends WebMvcConfigurationSupport {
   public JwtInterceptor jwtInterceptor() {
     return new JwtInterceptor();
   }
+
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(jwtInterceptor())
-        .addPathPatterns("/api/**", "/auth/token/refresh", "/auth/logout")
-        .excludePathPatterns("/auth/signin", "/auth/signup");
+        .addPathPatterns("/api/v1/**")
+        .excludePathPatterns(
+          "api/v1/auth/signin", "api/v1/auth/signup", "/v2/api-docs",
+          "/configuration/ui", "/swagger-resources/**",
+          "/configuration/security", "/swagger-ui.html**",
+          "/webjars/**");
     super.addInterceptors(registry);
   }
+
+   /**
+     * 配置servlet处理
+     */
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+    
+    /**
+     * 发现如果继承了WebMvcConfigurationSupport，则在yml中配置的相关内容会失效。
+     * 需要重新指定静态资源
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("swagger-ui.html")
+        .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+        .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        super.addResourceHandlers(registry);
+    }
 }
