@@ -41,8 +41,7 @@ public class UserServiceImpl implements UserService {
     user.setUpdatedBy(operator.getId());
     user.setCreatedAt(LocalDateTime.now());
     user.setUpdatedAt(LocalDateTime.now());
-    Long id = userMapper.add(user);
-    return id;
+    return userMapper.add(user);
   }
 
   @Override
@@ -61,8 +60,7 @@ public class UserServiceImpl implements UserService {
     updatingUser.setUpdatedBy(operator.getId());
     updatingUser.setUpdatedAt(LocalDateTime.now());
     updatingUser.setVersion(user.getVersion());
-    Integer rowNum = userMapper.update(updatingUser);
-    if (rowNum == 0) {
+    if (userMapper.update(updatingUser) == 0) {
       throw new DataConflictException();
     }
   }
@@ -97,8 +95,7 @@ public class UserServiceImpl implements UserService {
       throw new NotFoundException();
     }
     user.freeze();
-    Integer rowNum = userMapper.update(user);
-    if (rowNum == 0) {
+    if (userMapper.update(user) == 0) {
       throw new DataConflictException();
     }
   }
@@ -110,8 +107,7 @@ public class UserServiceImpl implements UserService {
       throw new NotFoundException();
     }
     user.unfreeze();
-    Integer rowNum = userMapper.update(user);
-    if (rowNum == 0) {
+    if (userMapper.update(user) == 0) {
       throw new DataConflictException();
     }
   }
@@ -123,8 +119,7 @@ public class UserServiceImpl implements UserService {
       throw new NotFoundException();
     }
     user.disable();
-    Integer rowNum = userMapper.update(user);
-    if (rowNum == 0) {
+    if (userMapper.update(user) == 0) {
       throw new DataConflictException();
     }
   }
@@ -132,21 +127,20 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void dispatchRoles(Long id, List<Long> roleIdList, Integer dispatchVersion, User operator) 
-      throws NotFoundException, DataConflictException {
+      throws DataConflictException {
     RoleFilter roleFilter = new RoleFilter();
     roleFilter.setUserId(id);
     Query<RoleFilter> query = new Query<>();
     query.setFilter(roleFilter);
     List<Role> roles = roleMapper.list(query);
-    List<Long> storedRoleIdList = roles.stream().map(role -> role.getId()).collect(Collectors.toList());
-    storedRoleIdList.stream()
+    List<Long> dispatchedRoleIdList = roles.stream().map(role -> role.getId()).collect(Collectors.toList());
+    dispatchedRoleIdList.stream()
                     .filter(storedId -> !roleIdList.contains(storedId))
                     .forEach(deletingId -> userRoleMapper.delete(id, deletingId));
     roleIdList.stream()
-              .filter(roleId -> !storedRoleIdList.contains(roleId))
+              .filter(roleId -> !dispatchedRoleIdList.contains(roleId))
               .forEach(addingId -> userRoleMapper.add(id, addingId, operator.getId(), LocalDateTime.now()));
-    Integer rowNum = userMapper.incDispatchRoleVersion(dispatchVersion);
-    if (rowNum == 0) {
+    if (userMapper.incDispatchRoleVersion(dispatchVersion) == 0) {
       throw new DataConflictException();
     }
   }

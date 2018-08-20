@@ -12,8 +12,8 @@ import org.joda.time.LocalDateTime;
 
 @Mapper
 public interface DepartmentMapper {
-  Long add(Department permission);
-  Integer update(Department permission);
+  Long add(Department department);
+  Integer update(Department department);
   Integer delete(
     @Param("id") Long id,
     @Param("removedBy") Long removedBy,

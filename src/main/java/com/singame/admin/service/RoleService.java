@@ -16,5 +16,5 @@ public interface RoleService {
   Role getById(Long id) throws NotFoundException;
   List<Role> list(Query<RoleFilter> query);
   void dispatchPermission(Long id, List<Long> permissionIdList, Integer dispatchVersion, User operator)
-      throws NotFoundException, DataConflictException;
+      throws DataConflictException;
 }
