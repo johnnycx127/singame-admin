@@ -12,7 +12,8 @@ import lombok.AllArgsConstructor;
 public enum PermissionAction {
   UNKNOW(0),
   READ(1),
-  WRITE(2);
+  WRITE(2),
+  REMOVE(3);
 
   private final int value;
 

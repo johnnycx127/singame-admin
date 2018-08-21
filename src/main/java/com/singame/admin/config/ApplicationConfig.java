@@ -3,6 +3,7 @@ package com.singame.admin.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.singame.admin.interceptor.JwtInterceptor;
+import com.singame.admin.interceptor.PermissionInterceptor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,15 +47,20 @@ public class ApplicationConfig extends WebMvcConfigurationSupport {
     return new JwtInterceptor();
   }
 
+  @Bean PermissionInterceptor permissionInterceptor() {
+    return new PermissionInterceptor();
+  }
+
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(jwtInterceptor())
-        .addPathPatterns("/api/v1/**")
-        .excludePathPatterns(
-          "api/v1/auth/signin", "api/v1/auth/signup", "/v2/api-docs",
-          "/configuration/ui", "/swagger-resources/**",
-          "/configuration/security", "/swagger-ui.html**",
-          "/webjars/**");
+            .addPathPatterns("/api/v1/**")
+            .excludePathPatterns(
+              "api/v1/auth/signin", "api/v1/auth/signup");
+    registry.addInterceptor(permissionInterceptor())
+            .addPathPatterns("/api/v1/**")
+            .excludePathPatterns("api/v1/auth/**");
+            
     super.addInterceptors(registry);
   }
 
