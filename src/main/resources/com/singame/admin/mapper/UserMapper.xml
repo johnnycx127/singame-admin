@@ -41,8 +41,7 @@
             position = #{position},
             updated_by = #{updatedBy},
             updated_at = #{updatedAt},
-            version = version + 1,
-            dispatch_role_version = 0
+            version = version + 1
         WHERE
             id = #{id} AND
             version = #{version}

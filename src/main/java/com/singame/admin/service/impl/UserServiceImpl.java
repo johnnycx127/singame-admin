@@ -184,6 +184,7 @@ public class UserServiceImpl implements UserService {
     if (userMapper.update(user) == 0) {
       throw new DataConflictException();
     }
+    userRoleMapper.clear(id);
   }
 
   @Override

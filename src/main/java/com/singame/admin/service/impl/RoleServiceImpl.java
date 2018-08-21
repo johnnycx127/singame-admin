@@ -88,6 +88,7 @@ public class RoleServiceImpl implements RoleService {
     if (roleMapper.delete(id, operator.getId(), LocalDateTime.now(), version) == 0) {
       throw new DataConflictException();
     }
+    rolePermissionMapper.clear(id);
 	}
 
 	@Override
