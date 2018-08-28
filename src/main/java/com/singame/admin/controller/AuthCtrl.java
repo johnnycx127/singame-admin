@@ -52,7 +52,7 @@ import io.swagger.annotations.ApiParam;
 
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping()
 public class AuthCtrl {
   private Logger logger = LoggerFactory.getLogger(AuthCtrl.class);
 
@@ -78,7 +78,7 @@ public class AuthCtrl {
 
 
   @ApiOperation(value="登录", notes="登录")
-  @RequestMapping(value="signin", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value="/auth/signin", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<TokenRespDTO> login(
       @ApiParam @RequestBody final LoginDTO loginReq,
       HttpServletRequest request) throws BadRequestException, NotFoundException, InteralException {
@@ -122,7 +122,7 @@ public class AuthCtrl {
   }
   
   @ApiOperation(value="刷新Token", notes="刷新Token")
-  @RequestMapping(value="token/refresh", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value="/api/v1/token/refresh", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<TokenRespDTO> refreshtoken(
       @ApiParam @RequestParam("refreshToken") final String refreshToken) throws Exception {
     String newToken = JwtUtil.refreshToken(refreshToken, jwtSceret, jwtExpiredTime);
@@ -133,7 +133,7 @@ public class AuthCtrl {
   }
 
   @ApiOperation(value="注册", notes="注册")
-  @RequestMapping(value="signup", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value="/auth/signup", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<UserDTO> signup(
       @ApiParam @RequestBody final LoginDTO loginDTO)
       throws DuplicateRecordException, BadRequestException {
@@ -146,7 +146,7 @@ public class AuthCtrl {
   }
 
   @ApiOperation(value="登出", notes="登出")
-  @RequestMapping(value="logout", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value="/api/v1/logout", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<?> logout(@RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth)
       throws BadRequestException {
     String sessionId = SignatureUtil.sha256(userAuth.getUser().getId().toString());

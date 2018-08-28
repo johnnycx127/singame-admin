@@ -1,6 +1,8 @@
 package com.singame.admin.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.singame.admin.dto.UserAuthDTO;
@@ -12,17 +14,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
-import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
-import springfox.documentation.service.Parameter;
 import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.SecurityConfiguration;
+import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -56,17 +61,6 @@ public class SwaggerConfig {
 
   @Bean
   public Docket api() {
-    // 添加head参数start
-    ParameterBuilder tokenPar = new ParameterBuilder();
-    tokenPar.name("Authorization")
-            .description("令牌")
-            .modelRef(new ModelRef("string"))
-            .parameterType("header")
-            .required(true)
-            .build();
-
-    List<Parameter> pars = new ArrayList<Parameter>();
-    pars.add((Parameter) tokenPar.build());
     // 添加head参数end
     return new Docket(DocumentationType.SWAGGER_2)
                     .ignoredParameterTypes(UserAuthDTO.class)
@@ -76,12 +70,13 @@ public class SwaggerConfig {
                     .build()
                     .directModelSubstitute(LocalDate.class, java.sql.Date.class)
                     .directModelSubstitute(LocalDateTime.class, java.util.Date.class)
-                    .globalOperationParameters(pars)
                     .apiInfo(apiInfo())
                     .globalResponseMessage(RequestMethod.GET, defaultResp)
                     .globalResponseMessage(RequestMethod.POST, defaultResp)
                     .globalResponseMessage(RequestMethod.PUT, defaultResp)
-                    .globalResponseMessage(RequestMethod.DELETE, defaultResp);
+                    .globalResponseMessage(RequestMethod.DELETE, defaultResp)
+                    .securityContexts(Arrays.asList(securityContext()))
+				            .securitySchemes(Arrays.asList(apiKey()));
   }
   
   private ApiInfo apiInfo() {
@@ -92,5 +87,36 @@ public class SwaggerConfig {
                 .version("1.0")
                 .contact(new Contact("johnycx", "", "johnnycx127@gmail.com"))
                 .build();
+  }
+
+  private ApiKey apiKey() {
+    return new ApiKey("apiKey", "Authorization", "header");
+  }
+
+  private List<SecurityReference> defaultAuth() {
+      AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+      AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+      authorizationScopes[0] = authorizationScope;
+      return Collections.singletonList(new SecurityReference("apiKey", authorizationScopes));
+  }
+
+  private SecurityContext securityContext() {
+      return SecurityContext.builder()
+              .securityReferences(defaultAuth())
+              .forPaths(PathSelectors.regex("/api/*"))
+              .build();
+  }
+
+  @Bean
+  public SecurityConfiguration security() {
+      return SecurityConfigurationBuilder.builder()
+              .clientId("api-client-id")
+              .clientSecret("api-client-secret")
+              .realm("api-realm")
+              .appName("api-app")
+              .scopeSeparator(",")
+              .additionalQueryStringParams(null)
+              .useBasicAuthenticationWithAccessCodeGrant(false)
+              .build();
   }
 }
