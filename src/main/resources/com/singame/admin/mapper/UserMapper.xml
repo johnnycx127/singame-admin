@@ -99,12 +99,13 @@
     <if test="filter.departmentId != null">
       AND user.department_id = #{filter.department_id}
     </if>
-    <if test="!sorters.isEmpty()">
+    <if test="sorters != null and !sorters.isEmpty()">
     ORDER BY
       <foreach collection="list" item="sorters" open=" " close=" " separator=",">
         user.#{item.fieldName} #{item.sort}
       </foreach>
     </if>
-    LIMIT #{offset}, <choose><when test="size > 0">#{size}</when><otherwise>20</otherwise></choose>
+    LIMIT <choose><when test="offset != null and offset > 0">#{offset}</when><otherwise>0</otherwise></choose>,
+          <choose><when test="size != null and size > 0">#{size}</when><otherwise>20</otherwise></choose>
   </select>
 </mapper>
