@@ -1,0 +1,45 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.singame.admin.mapper.UserRoleMapper">
+  <insert id="add">
+    INSERT INTO user_role
+      (user_id, role_id, created_by, created_at)
+    VALUES
+      (#{userId}, #{roleId}, #{craetedBy}, #{createdAt})
+  </insert>
+
+  <insert id="bulkAdd">
+    INSERT INTO user_role
+      (user_id, role_id, created_by, created_at)
+    VALUES
+      <foreach collection="list" item="roleIdList" open="" close="" separator=",">
+        (#{userId}, #{roleId}, #{craetedBy}, #{createdAt})
+      </foreach>
+  </insert>
+
+  <delete id="delete">
+    DELETE FROM
+      user_role
+    WHERE
+      user_id = #{userId} AND
+      role_id = #{roleId}
+  </delete>
+
+  <delete id="bulkDelete">
+    DELETE FROM
+      user_role
+    WHERE
+      <foreach collection="list" item="roleIdList" open="(" close=")" separator="OR">
+        role_id = #{item} AND user_id = #{userId}
+      </foreach>
+  </delete>
+
+  <delete id="clear">
+    DELETE FROM
+      user_role
+    WHERE
+      user_id = #{userId}
+  </delete>
+</mapper>

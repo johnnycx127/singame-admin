@@ -41,7 +41,7 @@ public class PermissionServiceImpl implements PermissionService {
     if (permissions.size() > 1) {
       throw new DuplicateRecordException();
     }
-    if (permissions.size() > 0 && permissions.get(1).getId() != id) {
+    if (permissions.size() > 0 && permissions.get(0).getId() != id) {
       throw new DuplicateRecordException();
     }
   }

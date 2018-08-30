@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
 @Data
 @ToString
+@EqualsAndHashCode
 public class Query<T> {
   protected T filter;
   protected List<Sorter> sorters = new ArrayList<>();

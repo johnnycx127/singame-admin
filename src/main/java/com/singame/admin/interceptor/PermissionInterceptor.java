@@ -47,7 +47,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse reponse, Object handle) throws Exception {
-    String url = request.getRequestURL().toString();
+    String url = request.getServletPath();
     UserAuthDTO userAuthDTO = (UserAuthDTO) request.getAttribute(ReqAttrKey.REQ_USER_AUTH_KEY);
     PathContainer pathContainer = PathContainer.parsePath(url);
     PathPatternParser ppp = new PathPatternParser();

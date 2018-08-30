@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Copyright 2015-2016 the original author or authors.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.singame.admin.mapper.UserMapper">
+  <insert id="add" parameterType="User">
+    INSERT INTO user
+    (
+      code, password, name, gender, status, department_id,
+      is_department_master, position, created_by, updated_by, 
+      created_at, updated_at, version, dispatch_role_version
+    )
+    VALUES
+    (
+      #{code}, #{password}, #{name}, #{gender.value}, #{status.value}, #{departmentId},
+      #{isDepartmentMaster}, #{position}, #{createdBy}, #{updatedBy},
+      #{createdAt}, #{updatedAt}, 1, 0
+    )
+  </insert>
+
+  <update id="update" parameterType="User">
+    UPDATE user
+        SET name = #{name},
+            status = #{status.value},
+            gender = #{gender.value},
+            department_id = #{departmentId},
+            is_department_master = #{isDepartmentMaster},
+            position = #{position},
+            updated_by = #{updatedBy},
+            updated_at = #{updatedAt},
+            version = version + 1
+        WHERE
+            id = #{id} AND
+            version = #{version}
+  </update>
+
+  <update id="incDispatchRoleVersion">
+    UPDATE user
+        SET dispatch_role_version = dispatch_role_version + 1
+        WHERE dispatch_role_version = #{version}
+  </update>
+
+  <select id="getById" parameterType="Long" resultType="User">
+    SELECT * FROM
+        user
+    WHERE
+        id = #{id}
+  </select>
+
+  <select id="getByCode" parameterType="String" resultType="User">
+    SELECT * FROM
+        user
+    WHERE
+        code = #{code}
+  </select>
+
+  <select id="list" parameterType="Query" resultType="User">
+    SELECT user.* FROM
+        user
+    <if test="filter.roleId != null">
+    INNER JOIN 
+      user_role
+    ON
+      user.id = user_role.user_id AND user_role.role_id = #{filter.roleId}
+    </if>
+    WHERE
+      1 = 1
+    <if test="filter.codePartten != null and filter.codePartten != ''">  
+		  AND user.code LIKE "%"#{filter.codePartten}"%"
+    </if>
+    <if test="filter.namePartten != null and filter.namePartten != ''">  
+		  AND user.name LIKE "%"#{filter.namePartten}"%"
+    </if>
+    <if test="filter.code != null and filter.code != ''">
+      AND user.code = #{filter.code}
+    </if>
+    <if test="filter.name != null and filter.name != ''">
+      AND user.name = #{filter.name}
+    </if>
+    <if test="filter.gender != null">  
+		  AND user.gender = #{filter.gender}
+    </if>
+    <if test="filter.status != null">  
+		  AND user.status = #{filter.status}
+    </if>
+    <if test="filter.departmentId != null">
+      AND user.department_id = #{filter.department_id}
+    </if>
+    <if test="sorters != null and !sorters.isEmpty()">
+    ORDER BY
+      <foreach collection="list" item="sorters" open=" " close=" " separator=",">
+        user.#{item.fieldName} #{item.sort}
+      </foreach>
+    </if>
+    LIMIT <choose><when test="offset != null and offset > 0">#{offset}</when><otherwise>0</otherwise></choose>,
+          <choose><when test="size != null and size > 0">#{size}</when><otherwise>20</otherwise></choose>
+  </select>
+</mapper>
