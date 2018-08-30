@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     if (users.size() > 1) {
       throw new DuplicateRecordException("用户名称重复");
     }
-    if (users.size() > 0 && users.get(1).getId() != id) {
+    if (users.size() > 0 && users.get(0).getId() != id) {
       throw new DuplicateRecordException("用户名称重复");
     }
   }

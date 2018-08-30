@@ -35,7 +35,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     if (depts.size() > 1) {
       throw new DuplicateRecordException();
     }
-    if (depts.size() > 0 && depts.get(1).getId() != id) {
+    if (depts.size() > 0 && depts.get(0).getId() != id) {
       throw new DuplicateRecordException();
     }
   }

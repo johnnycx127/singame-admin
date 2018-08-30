@@ -44,7 +44,7 @@ public class RoleServiceImpl implements RoleService {
     if (roles.size() > 1) {
       throw new DuplicateRecordException("名称重复");
     }
-    if (roles.size() > 0 && roles.get(1).getId() != id) {
+    if (roles.size() > 0 && roles.get(0).getId() != id) {
       throw new DuplicateRecordException("名称重复");
     }
   }

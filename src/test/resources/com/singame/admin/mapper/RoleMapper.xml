@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Copyright 2015-2016 the original author or authors.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.singame.admin.mapper.RoleMapper">
+
+  <insert id="add" parameterType="Role">
+    INSERT INTO role
+    (
+      name, created_by, updated_by, created_at, updated_at, version, dispatch_permission_version
+    )
+    VALUES
+    (
+      #{name}, #{createdBy}, #{updatedBy}, #{createdAt}, #{updatedAt}, 1, 0
+    )
+  </insert>
+
+  <update id="update" parameterType="Role">
+    UPDATE role
+        SET name = #{name},
+            updated_by = #{updatedBy},
+            updated_at = #{updatedAt},
+            version = version + 1
+        WHERE
+            removed_at IS NULL AND
+            id = #{id} AND
+            version = #{version}
+  </update>
+
+  <update id="incDispatchRoleVersion">
+    UPDATE user
+        SET dispatch_permission_version = dispatch_permission_version + 1
+        WHERE dispatch_permission_version = #{version}
+  </update>
+
+  <update id="delete" parameterType="Long">
+    UPDATE role
+        SET removed_by = #{removedBy},
+            removed_at = #{removedAt},
+            version = version + 1
+        WHERE
+            removed_at IS NULL AND
+            id = #{id} AND
+            version = #{version}
+  </update>
+
+  <select id="getById" parameterType="Long" resultType="Role">
+    SELECT * FROM
+      role
+    WHERE
+      removed_at IS NULL AND
+      id = #{id}
+  </select>
+
+  <select id="list" parameterType="Query" resultType="Role">
+    SELECT * FROM
+      role
+    <if test="filter.userId != null">
+    INNER JOIN
+      user_role
+    ON
+      role.id = user_role.role_id AND user_role.user_id = #{filter.userId}
+    </if>
+    <if test="filter.permissionId != null">
+    INNER JOIN
+      role_permission
+    ON
+      role.id = role_permission.role_id AND role_permission.permission_id = #{filter.permissionId}
+    </if>
+    WHERE
+      removed_at IS NULL
+    <if test="filter.namePartten != null and filter.namePartten != ''">  
+      AND role.name LIKE "%"#{filter.namePartten}"%"
+    </if>
+    <if test="filter.name != null and filter.name != ''">
+      AND role.name = #{filter.name}
+    </if>
+    <if test="sorters != null and !sorters.isEmpty()">
+    ORDER BY
+      <foreach collection="list" item="sorters" open=" " close=" " separator=",">
+        user.#{item.fieldName} #{item.sort}
+      </foreach>
+    </if>
+    LIMIT <choose><when test="offset != null and offset > 0">#{offset}</when><otherwise>0</otherwise></choose>,
+          <choose><when test="size != null and size > 0">#{size}</when><otherwise>20</otherwise></choose>
+  </select>
+
+</mapper>

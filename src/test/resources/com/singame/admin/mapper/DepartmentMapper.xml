@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Copyright 2015-2016 the original author or authors.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.singame.admin.mapper.DepartmentMapper">
+  <insert id="add" parameterType="Department">
+    INSERT INTO department
+    (
+      pid, name, description, created_by, updated_by, created_at, updated_at, version
+    )
+    VALUES
+    (
+      #{pid}, #{name}, #{description}, #{createdBy}, #{updatedBy}, #{createdAt}, #{updatedAt}, 1
+    )
+  </insert>
+
+  <update id="update" parameterType="Department">
+    UPDATE department
+          SET pid = #{pid},
+              name = #{name},
+              description = #{description},
+              updated_by = #{updatedBy},
+              updated_at = #{updatedAt},
+              version = version + 1
+          WHERE
+              removed_at IS NULL AND
+              id = #{id} AND
+              version = #{version}
+  </update>
+
+  <update id="delete" parameterType="Long">
+    UPDATE department
+        SET removed_by = #{removed_by},
+            removed_at = #{removed_at},
+            version = version + 1
+        WHERE
+          removed_at IS NULL AND
+          id = #{id} AND
+          version = #{version}
+  </update>
+
+  <select id="getById" parameterType="Long" resultType="Department">
+    SELECT * FROM
+      department
+    WHERE
+      removed_at IS NULL AND
+      id = #{id}
+  </select>
+
+  <select id="list" parameterType="Query" resultType="Department">
+    SELECT * FROM
+      department
+    WHERE
+      removed_at IS NULL AND
+    <if test="filter.namePartten != null and filter.namePartten != ''">  
+      AND name LIKE "%"#{filter.namePartten}"%"
+    </if>
+    <if test="filter.name != null and filter.name != ''">
+      AND name = #{filter.name}
+    </if>
+    <if test="sorters != null and !sorters.isEmpty()">
+      ORDER BY
+      <foreach collection="list" item="sorters" open=" " close=" " separator=",">
+        user.#{item.fieldName} #{item.sort}
+      </foreach>
+    </if>
+    LIMIT <choose><when test="offset != null and offset > 0">#{offset}</when><otherwise>0</otherwise></choose>,
+          <choose><when test="size != null and size > 0">#{size}</when><otherwise>20</otherwise></choose>
+  </select>
+</mapper>
