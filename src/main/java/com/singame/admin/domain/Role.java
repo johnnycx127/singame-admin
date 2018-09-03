@@ -4,14 +4,14 @@ import com.singame.admin.dto.RoleDTO;
 
 import org.joda.time.LocalDateTime;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
 @ToString
+@Builder
 @EqualsAndHashCode(of="id")
 public class Role {
   private Long id;
@@ -26,17 +26,17 @@ public class Role {
   private Integer dispatchPermissionVersion;
 
   public RoleDTO toConvertDTO() {
-    RoleDTO roleDTO = new RoleDTO();
-    roleDTO.setId(id);
-    roleDTO.setName(name);
-    roleDTO.setCreatedBy(createdBy);
-    roleDTO.setCreatedAt(createdAt);
-    roleDTO.setUpdatedBy(updatedBy);
-    roleDTO.setUpdatedAt(updatedAt);
-    roleDTO.setRemovedBy(removedBy);
-    roleDTO.setRemovedAt(removedAt);
-    roleDTO.setVersion(version);
-    roleDTO.setDispatchPermissionVersion(dispatchPermissionVersion);
-    return roleDTO;
+    return RoleDTO.builder()
+                  .id(id)
+                  .name(name)
+                  .createdAt(createdAt)
+                  .createdBy(createdBy)
+                  .updatedAt(updatedAt)
+                  .updatedBy(updatedBy)
+                  .removedAt(removedAt)
+                  .removedBy(removedBy)
+                  .version(version)
+                  .dispatchPermissionVersion(dispatchPermissionVersion)
+                  .build();
   }
 }

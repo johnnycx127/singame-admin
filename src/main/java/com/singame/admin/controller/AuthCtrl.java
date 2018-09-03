@@ -3,6 +3,7 @@ package com.singame.admin.controller;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -34,8 +35,6 @@ import com.singame.admin.utils.SignatureUtil;
 import com.google.common.base.Strings;
 
 import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -49,13 +48,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @RestController
 @RequestMapping()
 public class AuthCtrl {
-  private Logger logger = LoggerFactory.getLogger(AuthCtrl.class);
-
   @Resource
   private RedisTemplate<String, UserAuthDTO> redisTemplate;
   @Autowired
@@ -90,29 +89,31 @@ public class AuthCtrl {
     if (!BCrypt.checkpw(loginReq.getPassword(), psw)) {
       throw new BadRequestException("密码错误");
     }
-    UserAuthDTO userAuth = new UserAuthDTO();
+    UserAuthDTO.UserAuthDTOBuilder userAuthBuilder = UserAuthDTO.builder();
     // set userDTO
-    userAuth.setUser(u.toConvertDTO());
-    // TODO roleDTO list builder 
-    RoleFilter roleFilter = new RoleFilter();
-    roleFilter.setUserId(u.getId());
-    Query<RoleFilter> roleQuery = new Query<>();
-    roleQuery.setFilter(roleFilter);
+    userAuthBuilder.user(u.toConvertDTO());
+    Query<RoleFilter> roleQuery = Query.<RoleFilter>builder()
+                                       .filter(RoleFilter.builder()
+                                          .userId(u.getId())
+                                          .build())
+                                       .build();
     List<Role> roles = roleService.list(roleQuery);
-    userAuth.setRoleList(roles.stream().map(role -> role.toConvertDTO()).collect(Collectors.toList()));
+    userAuthBuilder.roleList(roles.stream().map(role -> role.toConvertDTO()).collect(Collectors.toList()));
     // TODO permissionDTO list builder
     Set<Permission> permissionSet = new HashSet<>();
     for (Role role : roles) {
-      PermissionFilter pFilter = new PermissionFilter();
-      pFilter.setRoleId(role.getId());
-      Query<PermissionFilter> permissionQuery = new Query<>();
-      permissionQuery.setFilter(pFilter);
+      Query<PermissionFilter> permissionQuery = Query.<PermissionFilter>builder()
+                                                     .filter(PermissionFilter.builder()
+                                                        .roleId(role.getId())
+                                                        .build())
+                                                     .build();
       List<Permission> permissions = permissionService.list(permissionQuery);
       permissionSet.addAll(permissions);
     }
-    userAuth.setPermissionList(permissionSet.stream().map(p -> p.toConvertDTO()).collect(Collectors.toList()));
+    userAuthBuilder.permissionList(permissionSet.stream().map(p -> p.toConvertDTO()).collect(Collectors.toList()));
     String sessionId = SignatureUtil.sha256(u.getId().toString());
-    redisTemplate.opsForValue().set(sessionId, userAuth);
+    redisTemplate.opsForValue().set(sessionId, userAuthBuilder.build(), jwtExpiredTime, TimeUnit.MILLISECONDS);
+    // redisTemplate.expire(sessionId, jwtExpiredTime, TimeUnit.MILLISECONDS);
     String token = JwtUtil.createToken(sessionId, jwtSceret, jwtExpiredTime);
     String refreshToken = JwtUtil.getRefreshToken(sessionId, jwtSceret, jwtExpiredWeekTime);
     if (Strings.isNullOrEmpty(token) || Strings.isNullOrEmpty(refreshToken)) {
@@ -138,9 +139,9 @@ public class AuthCtrl {
       @ApiParam @RequestBody final LoginDTO loginDTO)
       throws DuplicateRecordException, BadRequestException {
     String scretedPass = BCrypt.hashpw(loginDTO.getPassword(), BCrypt.gensalt());
-    User u = new User();
-    u.setName(loginDTO.getCode());
-    u.setPassword(scretedPass);
+    User u = User.builder().code(loginDTO.getCode())
+                           .password(scretedPass)
+                           .build();
     userService.create(u);
     return new Reply<>(ReplyBizStatus.OK, "success", u.toConvertDTO());
   }

@@ -2,13 +2,13 @@ package com.singame.admin.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
+@Builder
 @ToString
 @EqualsAndHashCode
 @ApiModel(value="LoginReq", description="登录请求")

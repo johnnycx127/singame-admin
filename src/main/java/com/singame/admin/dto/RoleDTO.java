@@ -11,12 +11,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
 @ToString
+@Builder
 @EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="RoleDTO", description="角色")
@@ -45,17 +45,17 @@ public class RoleDTO {
   private Integer dispatchPermissionVersion;
 
   public Role toConvertEntity() {
-    Role role = new Role();
-    role.setId(id);
-    role.setName(name);
-    role.setCreatedBy(createdBy);
-    role.setCreatedAt(createdAt);
-    role.setUpdatedBy(updatedBy);
-    role.setUpdatedAt(updatedAt);
-    role.setRemovedBy(removedBy);
-    role.setRemovedAt(removedAt);
-    role.setVersion(version);
-    role.setDispatchPermissionVersion(dispatchPermissionVersion);
-    return role;
+    return Role.builder()
+               .id(id)
+               .name(name)
+               .createdAt(createdAt)
+               .createdBy(createdBy)
+               .updatedAt(updatedAt)
+               .updatedBy(updatedBy)
+               .removedAt(removedAt)
+               .removedBy(removedBy)
+               .version(version)
+               .dispatchPermissionVersion(dispatchPermissionVersion)
+               .build();
   }
 }

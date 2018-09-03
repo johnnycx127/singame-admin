@@ -15,8 +15,6 @@ import com.singame.admin.query.Query;
 import com.singame.admin.query.filter.DepartmentFilter;
 import com.singame.admin.service.DepartmentService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/departments")
 public class DepartmentCtrl {
-  private static Logger logger = LoggerFactory.getLogger(DepartmentCtrl.class);
-
   @Autowired
   private DepartmentService departmentService;
 
@@ -43,9 +41,9 @@ public class DepartmentCtrl {
       @ApiParam @RequestBody DepartmentDTO departmentDTO,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("departmentDTO is \n {} \n", departmentDTO.toString());
+    log.trace("departmentDTO is \n {} \n", departmentDTO.toString());
     Department department = departmentDTO.toConvertEntity();
-    logger.trace("department is \n {} \n", department.toString());
+    log.trace("department is \n {} \n", department.toString());
     Long id = departmentService.create(department, operator);
     return new Reply<>(ReplyBizStatus.OK, "success", department.toConvertDTO());
   }
@@ -57,10 +55,10 @@ public class DepartmentCtrl {
       @ApiParam @RequestBody DepartmentDTO departmentDTO,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("departmentId is {}, departmentDTO is \n {} \n", departmentId.toString(), departmentDTO.toString());
+    log.trace("departmentId is {}, departmentDTO is \n {} \n", departmentId.toString(), departmentDTO.toString());
     Department department = departmentDTO.toConvertEntity();
     department.setId(departmentId);
-    logger.trace("department is \n {} \n", department.toString());
+    log.trace("department is \n {} \n", department.toString());
     departmentService.update(department, operator);
     return new Reply<>(ReplyBizStatus.OK, "success");
   }
@@ -72,7 +70,7 @@ public class DepartmentCtrl {
       @ApiParam @PathVariable("version") Integer version,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("departmentId is {}\n", departmentId.toString());
+    log.trace("departmentId is {}\n", departmentId.toString());
     departmentService.delete(departmentId, version, operator);
     return new Reply<>(ReplyBizStatus.OK, "success");
   }
@@ -81,20 +79,20 @@ public class DepartmentCtrl {
   @RequestMapping(value="/{departmentId}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<DepartmentDTO> getDepartment(
       @ApiParam @PathVariable("departmentId") Long departmentId) throws Exception {
-    logger.trace("departmentId is {} \n", departmentId.toString());
+    log.trace("departmentId is {} \n", departmentId.toString());
     Department department = departmentService.getById(departmentId);
-    logger.trace("department is \n {} \n", department.toString());
+    log.trace("department is \n {} \n", department.toString());
     DepartmentDTO departmentDTO = department.toConvertDTO();
-    logger.trace("departmentDTO is \n {} \n", departmentDTO.toString());
+    log.trace("departmentDTO is \n {} \n", departmentDTO.toString());
     return new Reply<>(ReplyBizStatus.OK, "success", departmentDTO);
   }
 
   @ApiOperation(value="查询部门列表", notes="查询部门列表")
   @RequestMapping(value="/query", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<List<DepartmentDTO>> listDepartment(@ApiParam @RequestBody Query<DepartmentFilter> query) throws Exception {
-    logger.trace("department query is {} \n", query.toString());
+    log.trace("department query is {} \n", query.toString());
     List<Department> departments = departmentService.list(query);
-    logger.trace("department list is [\n {} \n]", Joiner.on("\t\n").join(departments));
+    log.trace("department list is [\n {} \n]", Joiner.on("\t\n").join(departments));
     return new Reply<>(ReplyBizStatus.OK, "success",
         departments.stream().map(department -> department.toConvertDTO()).collect(Collectors.toList()));
   }

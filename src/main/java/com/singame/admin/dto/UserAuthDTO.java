@@ -6,19 +6,22 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import io.swagger.annotations.ApiModel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Singular;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
+@Builder
 @ToString
 @EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="UserAuthResponse", description="用户权限resp")
 public class UserAuthDTO {
   private UserDTO user;
+  @Singular(value="roleList")
   private List<RoleDTO> roleList;
+  @Singular(value="permissionList")
   private List<PermissionDTO> permissionList;
 }

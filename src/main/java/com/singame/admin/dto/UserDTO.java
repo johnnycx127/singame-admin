@@ -11,15 +11,15 @@ import org.joda.time.LocalDateTime;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
 @ToString
+@Builder
 @EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="UserDTO", description="用户返回结果")
@@ -60,20 +60,20 @@ public class UserDTO {
 
 
   public User toConvertEntity() {
-    User user = new User();
-    user.setId(id);
-    user.setCode(code);
-    user.setName(name);
-    user.setGender(gender);
-    user.setStatus(status);
-    user.setDepartmentId(departmentId);
-    user.setPosition(position);
-    user.setCreatedBy(createdBy);
-    user.setCreatedAt(createdAt);
-    user.setUpdatedBy(updatedBy);
-    user.setUpdatedAt(updatedAt);
-    user.setVersion(version);
-    user.setDispatchRoleVersion(dispatchRoleVersion);
-    return user;
+    return User.builder()
+               .id(id)
+               .code(code)
+               .name(name)
+               .gender(gender)
+               .status(status)
+               .departmentId(departmentId)
+               .position(position)
+               .createdBy(createdBy)
+               .createdAt(createdAt)
+               .updatedBy(updatedBy)
+               .updatedAt(updatedAt)
+               .version(version)
+               .dispatchRoleVersion(dispatchRoleVersion)
+               .build();
   }
 }

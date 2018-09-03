@@ -5,14 +5,14 @@ import com.singame.admin.vo.PermissionAction;
 
 import org.joda.time.LocalDateTime;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
 @ToString
+@Builder
 @EqualsAndHashCode(of="id")
 public class Permission {
   private Long id;
@@ -31,21 +31,21 @@ public class Permission {
   private Integer version;
 
   public PermissionDTO toConvertDTO() {
-    PermissionDTO permissionDTO = new  PermissionDTO();
-    permissionDTO.setId(id);
-    permissionDTO.setCode(code);
-    permissionDTO.setResource(resource);
-    permissionDTO.setAction(action);
-    permissionDTO.setName(name);
-    permissionDTO.setDescritpion(descritpion);
-    permissionDTO.setIsOnlyMaster(isOnlyMaster);
-    permissionDTO.setCreatedBy(createdBy);
-    permissionDTO.setCreatedAt(createdAt);
-    permissionDTO.setUpdatedBy(updatedBy);
-    permissionDTO.setUpdatedAt(updatedAt);
-    permissionDTO.setRemovedBy(removedBy);
-    permissionDTO.setRemovedAt(removedAt);
-    permissionDTO.setVersion(version);
-    return permissionDTO;
+    return PermissionDTO.builder()
+                        .id(id)
+                        .code(code)
+                        .resource(resource)
+                        .action(action)
+                        .name(name)
+                        .descritpion(descritpion)
+                        .isOnlyMaster(isOnlyMaster)
+                        .createdAt(createdAt)
+                        .createdBy(createdBy)
+                        .updatedAt(updatedAt)
+                        .updatedBy(updatedBy)
+                        .removedAt(removedAt)
+                        .removedBy(removedBy)
+                        .version(version)
+                        .build();
   }
 }

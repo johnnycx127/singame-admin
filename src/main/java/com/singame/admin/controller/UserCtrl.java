@@ -17,8 +17,6 @@ import javax.websocket.server.PathParam;
 
 import com.singame.admin.common.ReqAttrKey;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -29,11 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserCtrl {
-  private static Logger logger = LoggerFactory.getLogger(UserCtrl.class);
+
   @Autowired
   private UserService userService;
 
@@ -62,11 +62,11 @@ public class UserCtrl {
       @ApiParam @PathParam("userId") Long userId,
       @ApiParam @RequestBody UserDTO userDTO,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
-    logger.trace("userAuthDTO is \n {} \n", userAuth.getUser().toString());
+    log.trace("userAuthDTO is \n {} \n", userAuth.getUser().toString());
     User user = userDTO.toConvertEntity();
     user.setId(userId);
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("operatory is \n {} \n", user.toString());
+    log.trace("operatory is \n {} \n", user.toString());
     userService.update(user, operator);
     return new Reply<>(ReplyBizStatus.OK, "success");
   }

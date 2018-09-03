@@ -13,24 +13,23 @@ import com.singame.admin.query.filter.DepartmentFilter;
 import com.singame.admin.service.DepartmentService;
 
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service("departmentService")
 public class DepartmentServiceImpl implements DepartmentService {
 
-  private static Logger logger = LoggerFactory.getLogger(DepartmentServiceImpl.class);
   @Autowired
   private DepartmentMapper departmentMapper;
 
   private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
-    DepartmentFilter filter = new DepartmentFilter();
-    filter.setName(name);
-    Query<DepartmentFilter> query = new Query<>();
-    query.setFilter(filter);
+    Query<DepartmentFilter> query = Query.<DepartmentFilter>builder()
+                                         .filter(DepartmentFilter.builder().name(name).build())
+                                         .build();
     List<Department> depts = departmentMapper.list(query);
     if (depts.size() > 1) {
       throw new DuplicateRecordException();

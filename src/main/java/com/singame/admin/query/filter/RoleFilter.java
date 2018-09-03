@@ -1,11 +1,11 @@
 package com.singame.admin.query.filter;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
+@Builder
 @ToString
 public class RoleFilter {
   private String name;

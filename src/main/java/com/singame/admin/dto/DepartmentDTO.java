@@ -9,15 +9,15 @@ import org.joda.time.LocalDateTime;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
 @ToString
 @EqualsAndHashCode
+@Builder
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="DepartmentDTO", description="部门")
 public class DepartmentDTO {
@@ -47,18 +47,16 @@ public class DepartmentDTO {
   private Integer version;
 
   public Department toConvertEntity() {
-    Department department = new Department();
-    department.setId(id);
-    department.setPid(pid);
-    department.setName(name);
-    department.setDescription(description);
-    department.setCreatedBy(createdBy);
-    department.setCreatedAt(createdAt);
-    department.setUpdatedBy(updatedBy);
-    department.setUpdatedAt(updatedAt);
-    department.setRemovedBy(removedBy);
-    department.setRemovedAt(removedAt);
-    department.setVersion(version);
-    return department;
+    return Department.builder()
+                     .id(id)
+                     .pid(pid)
+                     .name(name)
+                     .description(description)
+                     .createdAt(createdAt)
+                     .createdBy(createdBy)
+                     .updatedAt(updatedAt)
+                     .updatedBy(updatedBy)
+                     .version(version)
+                     .build();
   }
 }

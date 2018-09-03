@@ -6,14 +6,14 @@ import com.singame.admin.vo.UserStatus;
 
 import org.joda.time.LocalDateTime;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
+@Builder
 @ToString
 @EqualsAndHashCode(of="id")
 public class User {
@@ -34,21 +34,21 @@ public class User {
   private Integer dispatchRoleVersion;
 
   public UserDTO toConvertDTO() {
-    UserDTO userDTO = new UserDTO();
-    userDTO.setId(id);
-    userDTO.setCode(code);
-    userDTO.setName(name);
-    userDTO.setGender(gender);
-    userDTO.setStatus(status);
-    userDTO.setDepartmentId(departmentId);
-    userDTO.setPosition(position);
-    userDTO.setCreatedBy(createdBy);
-    userDTO.setCreatedAt(createdAt);
-    userDTO.setUpdatedBy(updatedBy);
-    userDTO.setUpdatedAt(updatedAt);
-    userDTO.setVersion(version);
-    userDTO.setDispatchRoleVersion(dispatchRoleVersion);
-    return userDTO;
+    return UserDTO.builder()
+                  .id(id)
+                  .code(code)
+                  .name(name)
+                  .gender(gender)
+                  .status(status)
+                  .departmentId(departmentId)
+                  .position(position)
+                  .createdBy(createdBy)
+                  .createdAt(createdAt)
+                  .updatedBy(updatedBy)
+                  .updatedAt(updatedAt)
+                  .version(version)
+                  .dispatchRoleVersion(dispatchRoleVersion)
+                  .build();
   }
 
   public void freeze() throws IllegalArgumentException {

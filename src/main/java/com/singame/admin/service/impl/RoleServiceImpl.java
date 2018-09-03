@@ -18,16 +18,15 @@ import com.singame.admin.query.filter.RoleFilter;
 import com.singame.admin.service.RoleService;
 
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service("roleService")
 public class RoleServiceImpl implements RoleService {
-
-  private static Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
   @Autowired
   private RoleMapper roleMapper;
@@ -37,9 +36,9 @@ public class RoleServiceImpl implements RoleService {
   private RolePermissionMapper rolePermissionMapper;
 
   private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
-    RoleFilter filter = new RoleFilter();
-    filter.setName(name);
-    Query<RoleFilter> query = new Query<>();
+    Query<RoleFilter> query = Query.<RoleFilter>builder()
+                                   .filter(RoleFilter.builder().name(name).build())
+                                   .build();
     List<Role> roles = roleMapper.list(query);
     if (roles.size() > 1) {
       throw new DuplicateRecordException("名称重复");
@@ -109,10 +108,11 @@ public class RoleServiceImpl implements RoleService {
   @Transactional
   public void dispatchPermission(Long id, List<Long> permissionIdList, Integer dispatchVersion, User operator)
       throws DataConflictException{
-    PermissionFilter pFilter = new PermissionFilter();
-    pFilter.setRoleId(id);
-    Query<PermissionFilter> pQuery = new Query<>();
-    pQuery.setFilter(pFilter);
+    Query<PermissionFilter> pQuery = Query.<PermissionFilter>builder()
+                                         .filter(PermissionFilter.builder()
+                                            .roleId(id)
+                                            .build())
+                                         .build();
     List<Permission> permissions = permissionMapper.list(pQuery);
     List<Long> dispatchedPIdList = permissions.stream().map(p -> p.getId()).collect(Collectors.toList());
     dispatchedPIdList.stream()

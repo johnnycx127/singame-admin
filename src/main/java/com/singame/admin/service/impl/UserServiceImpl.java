@@ -18,15 +18,15 @@ import com.singame.admin.service.UserService;
 import com.singame.admin.vo.UserStatus;
 
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service("userService")
 public class UserServiceImpl implements UserService {
-  private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
   @Autowired
   private UserMapper userMapper;
   @Autowired
@@ -42,10 +42,9 @@ public class UserServiceImpl implements UserService {
   }
 
   private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
-    UserFilter userFilter = new UserFilter();
-    userFilter.setName(name);
-    Query<UserFilter> userQuery = new Query<>();
-    userQuery.setFilter(userFilter);
+    Query<UserFilter> userQuery = Query.<UserFilter>builder()
+                                       .filter(UserFilter.builder().name(name).build())
+                                       .build();
     List<User> users = userMapper.list(userQuery);
     if (users.size() > 1) {
       throw new DuplicateRecordException("用户名称重复");
@@ -191,10 +190,9 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void dispatchRoles(Long id, List<Long> roleIdList, Integer dispatchVersion, User operator) 
       throws DataConflictException {
-    RoleFilter roleFilter = new RoleFilter();
-    roleFilter.setUserId(id);
-    Query<RoleFilter> query = new Query<>();
-    query.setFilter(roleFilter);
+    Query<RoleFilter> query = Query.<RoleFilter>builder()
+                                   .filter(RoleFilter.builder().userId(id).build())
+                                   .build();
     List<Role> roles = roleMapper.list(query);
     List<Long> dispatchedRoleIdList = roles.stream().map(role -> role.getId()).collect(Collectors.toList());
     dispatchedRoleIdList.stream()

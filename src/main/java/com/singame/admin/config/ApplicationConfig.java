@@ -2,6 +2,7 @@ package com.singame.admin.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.singame.admin.interceptor.JwtInterceptor;
 import com.singame.admin.interceptor.PermissionInterceptor;
 
@@ -28,6 +29,7 @@ public class ApplicationConfig extends WebMvcConfigurationSupport {
     Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(
             Object.class);
     ObjectMapper om = new ObjectMapper();
+    om.registerModule(new JodaModule());
     om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
     jackson2JsonRedisSerializer.setObjectMapper(om);
     // 配置redisTemplate

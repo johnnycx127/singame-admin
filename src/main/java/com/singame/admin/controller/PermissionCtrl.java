@@ -15,8 +15,6 @@ import com.singame.admin.query.Query;
 import com.singame.admin.query.filter.PermissionFilter;
 import com.singame.admin.service.PermissionService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/permissions")
 public class PermissionCtrl {
-  private static Logger logger = LoggerFactory.getLogger(PermissionCtrl.class);
+
   @Autowired
   private PermissionService permissionService;
 
@@ -42,9 +42,9 @@ public class PermissionCtrl {
       @ApiParam @RequestBody PermissionDTO permissionDTO,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("permissionDTO is \n {} \n", permissionDTO.toString());
+    log.trace("permissionDTO is \n {} \n", permissionDTO.toString());
     Permission permission = permissionDTO.toConvertEntity();
-    logger.trace("permission is \n {} \n", permission.toString());
+    log.trace("permission is \n {} \n", permission.toString());
     Long id = permissionService.create(permission, operator);
     return new Reply<>(ReplyBizStatus.OK, "success", permission.toConvertDTO());
   }
@@ -56,10 +56,10 @@ public class PermissionCtrl {
       @ApiParam @RequestBody PermissionDTO permissionDTO,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("permissionId is {}, permissionDTO is \n {} \n", permissionId.toString(), permissionDTO.toString());
+    log.trace("permissionId is {}, permissionDTO is \n {} \n", permissionId.toString(), permissionDTO.toString());
     Permission permission = permissionDTO.toConvertEntity();
     permission.setId(permissionId);
-    logger.trace("permission is \n {} \n", permission.toString());
+    log.trace("permission is \n {} \n", permission.toString());
     permissionService.update(permission, operator);
     return new Reply<>(ReplyBizStatus.OK, "success");
   }
@@ -71,7 +71,7 @@ public class PermissionCtrl {
       @ApiParam @PathVariable("version") Integer version,
       @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception {
     User operator = userAuth.getUser().toConvertEntity();
-    logger.trace("permissionId is {}\n", permissionId.toString());
+    log.trace("permissionId is {}\n", permissionId.toString());
     permissionService.delete(permissionId, version, operator);
     return new Reply<>(ReplyBizStatus.OK, "success");
   }
@@ -80,11 +80,11 @@ public class PermissionCtrl {
   @RequestMapping(value="/{permissionId}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<PermissionDTO> getPermissionById(
       @ApiParam @PathVariable("permissionId") Long permissionId) throws Exception {
-    logger.trace("permissionId is {} \n", permissionId.toString());
+    log.trace("permissionId is {} \n", permissionId.toString());
     Permission permission = permissionService.getById(permissionId);
-    logger.trace("permission is \n {} \n", permission.toString());
+    log.trace("permission is \n {} \n", permission.toString());
     PermissionDTO permissionDTO = permission.toConvertDTO();
-    logger.trace("permissionDTO is \n {} \n", permissionDTO.toString());
+    log.trace("permissionDTO is \n {} \n", permissionDTO.toString());
     return new Reply<>(ReplyBizStatus.OK, "success", permissionDTO);
   }
 
@@ -92,11 +92,11 @@ public class PermissionCtrl {
   @RequestMapping(value="/code/{permissionCode}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<PermissionDTO> getPermissionByCode(
       @ApiParam @PathVariable("permissionCode") String permissionCode) throws Exception {
-    logger.trace("permissionCode is {} \n", permissionCode.toString());
+    log.trace("permissionCode is {} \n", permissionCode.toString());
     Permission permission = permissionService.getByCode(permissionCode);
-    logger.trace("permission is \n {} \n", permission.toString());
+    log.trace("permission is \n {} \n", permission.toString());
     PermissionDTO permissionDTO = permission.toConvertDTO();
-    logger.trace("permissionDTO is \n {} \n", permissionDTO.toString());
+    log.trace("permissionDTO is \n {} \n", permissionDTO.toString());
     return new Reply<>(ReplyBizStatus.OK, "success", permissionDTO);
   }
 
@@ -104,9 +104,9 @@ public class PermissionCtrl {
   @RequestMapping(value="/query", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
   public Reply<List<PermissionDTO>> listPermission(
       @ApiParam @RequestBody Query<PermissionFilter> query) throws Exception {
-    logger.trace("permission query is {} \n", query.toString());
+    log.trace("permission query is {} \n", query.toString());
     List<Permission> permissions = permissionService.list(query);
-    logger.trace("permission list is [\n {} \n]", Joiner.on("\t\n").join(permissions));
+    log.trace("permission list is [\n {} \n]", Joiner.on("\t\n").join(permissions));
     return new Reply<>(ReplyBizStatus.OK, "success",
         permissions.stream().map(permission -> permission.toConvertDTO()).collect(Collectors.toList()));
   }

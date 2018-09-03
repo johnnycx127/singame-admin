@@ -4,11 +4,11 @@ import com.singame.admin.vo.Gender;
 import com.singame.admin.vo.UserStatus;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
+@Builder
 @ToString
 public class UserFilter {
   private String code;

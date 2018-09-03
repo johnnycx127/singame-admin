@@ -1,11 +1,11 @@
 package com.singame.admin.query;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
+@Builder
 @ToString
 public class Sorter {
   private String fieldName;

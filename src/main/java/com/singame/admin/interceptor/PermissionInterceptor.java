@@ -9,8 +9,6 @@ import com.singame.admin.dto.UserAuthDTO;
 import com.singame.admin.exception.AccessForbiddenException;
 import com.singame.admin.vo.PermissionAction;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.PathContainer;
@@ -19,10 +17,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.pattern.PathPatternParser;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class PermissionInterceptor implements HandlerInterceptor {
-  private static Logger logger = LoggerFactory.getLogger(PermissionInterceptor.class);
-
   @Resource
   private RedisTemplate<String, UserAuthDTO> redisTemplate;
 
@@ -66,12 +65,12 @@ public class PermissionInterceptor implements HandlerInterceptor {
   @Override
   public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
       ModelAndView modelAndView) throws Exception {
-    logger.debug("拦截器1执行-----postHandle");
+    log.debug("拦截器1执行-----postHandle");
   }
   
   @Override
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
       throws Exception {
-    logger.debug("拦截器1执行-----afterCompletion");
+    log.debug("拦截器1执行-----afterCompletion");
   }
 }

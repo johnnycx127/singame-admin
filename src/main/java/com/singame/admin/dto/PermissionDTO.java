@@ -10,14 +10,14 @@ import org.joda.time.LocalDateTime;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
 @Data
 @ToString
+@Builder
 @EqualsAndHashCode
 @JsonInclude(Include.NON_EMPTY)
 @ApiModel(value="PermissionDTO", description="权限")
@@ -54,21 +54,22 @@ public class PermissionDTO {
   private Integer version;
 
   public Permission toConvertEntity() {
-    Permission permission = new Permission();
-    permission.setId(id);
-    permission.setCode(code);
-    permission.setResource(resource);
-    permission.setAction(action);
-    permission.setName(name);
-    permission.setDescritpion(descritpion);
-    permission.setIsOnlyMaster(isOnlyMaster);
-    permission.setCreatedBy(createdBy);
-    permission.setCreatedAt(createdAt);
-    permission.setUpdatedBy(updatedBy);
-    permission.setUpdatedAt(updatedAt);
-    permission.setRemovedBy(removedBy);
-    permission.setRemovedAt(removedAt);
-    permission.setVersion(version);
-    return permission;
+    return Permission.builder()
+                     .id(id)
+                     .code(code)
+                     .resource(resource)
+                     .action(action)
+                     .name(name)
+                     .descritpion(descritpion)
+                     .isOnlyMaster(isOnlyMaster)
+                     .createdAt(createdAt)
+                     .createdBy(createdBy)
+                     .updatedAt(updatedAt)
+                     .updatedBy(updatedBy)
+                     .removedAt(removedAt)
+                     .removedBy(removedBy)
+                     .version(version)
+                     .build();
+
   }
 }

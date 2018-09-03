@@ -14,15 +14,16 @@ import com.singame.admin.mapper.PermissionMapper;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 @Service("permissionService")
 public class PermissionServiceImpl implements PermissionService {
 
-  private static Logger logger = LoggerFactory.getLogger(PermissionServiceImpl.class);
   @Autowired
   PermissionMapper permissionMapper;
 
@@ -34,9 +35,9 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   private void isDuplicatedName(Long id, String name) throws DuplicateRecordException {
-    PermissionFilter filter = new PermissionFilter();
-    filter.setName(name);
-    Query<PermissionFilter> query = new Query<>();
+    Query<PermissionFilter> query = Query.<PermissionFilter>builder()
+                                         .filter(PermissionFilter.builder().name(name).build())
+                                         .build();
     List<Permission> permissions = permissionMapper.list(query);
     if (permissions.size() > 1) {
       throw new DuplicateRecordException();
@@ -48,10 +49,12 @@ public class PermissionServiceImpl implements PermissionService {
 
   private void isDuplicatedResourceAndAction(Long id, String resource, PermissionAction action)
       throws DuplicateRecordException {
-    PermissionFilter filter = new PermissionFilter();
-    filter.setResource(resource);
-    filter.setAction(action);
-    Query<PermissionFilter> query = new Query<>();
+    Query<PermissionFilter> query = Query.<PermissionFilter>builder()
+                                         .filter(PermissionFilter.builder()
+                                            .resource(resource)
+                                            .action(action)
+                                            .build())
+                                         .build();
     List<Permission> permissions = permissionMapper.list(query);
     if (permissions.size() > 1) {
       throw new DuplicateRecordException();
