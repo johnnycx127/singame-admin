@@ -32,6 +32,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse reponse, Object handle) throws Exception {
+    if ("OPTIONS".equals(request.getMethod().toUpperCase())) {
+      return true;
+    }
     log.debug("拦截器1执行-----preHandle");
     String authHeader = request.getHeader(JWT_TOKEN_KEY);
     if (Strings.isNullOrEmpty(authHeader) || !authHeader.startsWith(JWT_HEADER_PREFIX)) {
